@@ -2,6 +2,7 @@ package com.Tarea3AD.Tarea3AD_PabloMerino.controller;
 
 import java.io.IOException;
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -13,11 +14,14 @@ import org.springframework.stereotype.Controller;
 
 import com.Tarea3AD.Tarea3AD_PabloMerino.config.StageManager;
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Carnet;
+import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Estancia;
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Parada;
+import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.PereParada;
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Peregrino;
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Sesion;
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Usuario;
 import com.Tarea3AD.Tarea3AD_PabloMerino.services.CarnetService;
+import com.Tarea3AD.Tarea3AD_PabloMerino.services.EstanciaService;
 import com.Tarea3AD.Tarea3AD_PabloMerino.services.ParadaService;
 import com.Tarea3AD.Tarea3AD_PabloMerino.services.PereParadaService;
 import com.Tarea3AD.Tarea3AD_PabloMerino.services.PeregrinoService;
@@ -109,6 +113,8 @@ public class paradaController implements Initializable {
 	private ParadaService paradasService;
 	@Autowired
 	private PereParadaService pereParadaService;
+	@Autowired
+	private EstanciaService estanciaService;
 	@Lazy
 	@Autowired
 	private StageManager stageManager;
@@ -138,7 +144,7 @@ public class paradaController implements Initializable {
 	}
 
 	private void cargarPeregrinos() {
-		List<Peregrino> peregrinos= pereService.findAll();
+		List<Peregrino> peregrinos = pereService.findAll();
 		List<String> nombresPeregrinos = new ArrayList<>();
 		for (Peregrino p : peregrinos) {
 			nombresPeregrinos.add(p.getNombrePeregrino());
@@ -167,6 +173,7 @@ public class paradaController implements Initializable {
 
 	@FXML
 	private void sellarParada(ActionEvent event) throws IOException {
+		boolean isVip = false;
 
 		Usuario usuario = sesion.getUsuIniciado();
 
@@ -177,18 +184,44 @@ public class paradaController implements Initializable {
 			System.out.println("El responsable no tiene paradas " + usuario.getnombreUsuario());
 			return;
 		}
+		Parada parada = paradaOpt.get();
 
 		String pere = cmbxPeregrinos.getValue();
-		Optional<Peregrino> paradaInicialOpt = pereService.findBynombrePeregrino(pere);
-		
-		boolean isVip = false;
+		Optional<Peregrino> peregrinoOpt = pereService.findBynombrePeregrino(pere);
+		if (peregrinoOpt.isEmpty()) {
+			System.out.println("No se encuentran peregrinos");
+			return;
+		}
+		Peregrino peregrino = peregrinoOpt.get();
+
+		PereParada pereParada = new PereParada();
+		pereParada.setParada(parada);
+		pereParada.setPeregrino(peregrino);
+		pereParada.setFecha(LocalDate.now());
+		pereParadaService.save(pereParada);
+
+		Carnet carnetPere = peregrino.getCarnet();
+		double distanciaCarnet = carnetPere.getDistancia();
+
+		Carnet carnet = carnetService.find(carnetPere.getId());
+		carnet.setDistancia(distanciaCarnet + 10);
+
+		Estancia estancia = new Estancia();
+		estancia.setParada(parada);
+		estancia.setPeregrino(peregrino);
+		estancia.setFecha(LocalDate.now());
 
 		if (checkVIP.isSelected()) {
 			isVip = true;
+			carnet.setNvips(carnetPere.getNvips() + 1);
+			estancia.setVip(isVip);
 		} else {
 			isVip = false;
+			carnet.setNvips(carnetPere.getNvips());
+			estancia.setVip(isVip);
 		}
-
+		estanciaService.save(estancia);
+		carnetService.update(carnet);
 	}
 
 }

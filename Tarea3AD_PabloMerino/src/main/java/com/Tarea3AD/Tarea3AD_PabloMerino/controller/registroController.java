@@ -1,33 +1,16 @@
 package com.Tarea3AD.Tarea3AD_PabloMerino.controller;
 
-//import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-//import java.time.LocalDate;
-//import java.time.format.DateTimeFormatter;
-//import java.util.Comparator;
-//import java.util.LinkedHashSet;
-//import java.util.List;
-//import java.util.Optional;
 import java.util.ResourceBundle;
-//import java.util.Set;
-//import java.util.TreeSet;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-//import javax.xml.parsers.DocumentBuilder;
-//import javax.xml.parsers.DocumentBuilderFactory;
-//import javax.xml.transform.Result;
-//import javax.xml.transform.Source;
-//import javax.xml.transform.Transformer;
-//import javax.xml.transform.TransformerFactory;
-//import javax.xml.transform.dom.DOMSource;
-//import javax.xml.transform.stream.StreamResult;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;

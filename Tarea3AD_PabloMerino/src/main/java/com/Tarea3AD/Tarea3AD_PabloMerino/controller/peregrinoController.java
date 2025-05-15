@@ -1,19 +1,13 @@
 package com.Tarea3AD.Tarea3AD_PabloMerino.controller;
 
 import java.io.File;
-//import java.io.File;
+
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
+
 import java.util.Optional;
-//import java.time.LocalDate;
-//import java.time.format.DateTimeFormatter;
-//import java.util.Comparator;
-//import java.util.LinkedHashSet;
-//import java.util.List;
-//import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Set;
 
@@ -25,15 +19,6 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
-//import javax.xml.parsers.DocumentBuilder;
-//import javax.xml.parsers.DocumentBuilderFactory;
-//import javax.xml.transform.Result;
-//import javax.xml.transform.Source;
-//import javax.xml.transform.Transformer;
-//import javax.xml.transform.TransformerFactory;
-//import javax.xml.transform.dom.DOMSource;
-//import javax.xml.transform.stream.StreamResult;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -50,9 +35,6 @@ import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.PereParada;
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Peregrino;
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Sesion;
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Usuario;
-import com.Tarea3AD.Tarea3AD_PabloMerino.services.CarnetService;
-import com.Tarea3AD.Tarea3AD_PabloMerino.services.ParadaService;
-import com.Tarea3AD.Tarea3AD_PabloMerino.services.PereParadaService;
 import com.Tarea3AD.Tarea3AD_PabloMerino.services.PeregrinoService;
 import com.Tarea3AD.Tarea3AD_PabloMerino.services.UserService;
 import com.Tarea3AD.Tarea3AD_PabloMerino.vistas.FxmlView;
@@ -137,7 +119,7 @@ public class peregrinoController implements Initializable {
 		Optional<Peregrino> peregrinoOpt = pereService.findByUsuario(usuario);
 //		Optional<Peregrino> peregrinoOpt = pereService.findBynombrePeregrino(nombrePeregrino);
 //		System.out.println("Peregrino"+peregrinoOpt.get());
-		
+
 		if (!peregrinoOpt.isPresent()) {
 			alertaError("ERROR", "No se ha encontrado el peregrino.");
 			return false;
@@ -198,11 +180,11 @@ public class peregrinoController implements Initializable {
 
 			Set<PereParada> cjtoparadas = peregrino.getPereParadas();
 			for (PereParada pp : cjtoparadas) {
-				Parada parada  = pp.getParada();
+				Parada parada = pp.getParada();
 				Element paradaElement = documento.createElement("parada");
 
 				Element orden = documento.createElement("orden");
-				orden.appendChild(documento.createTextNode(  ""+ordenParada)  );///String.valueOf(parada.getId())));
+				orden.appendChild(documento.createTextNode("" + ordenParada));/// String.valueOf(parada.getId())));
 				paradaElement.appendChild(orden);
 
 				Element nombreParada = documento.createElement("nombre");
