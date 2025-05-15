@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
+
+<VBox prefHeight="504.0" prefWidth="715.0"
+	xmlns="http://javafx.com/javafx/23.0.1"
+	xmlns:fx="http://javafx.com/fxml/1"
+	fx:controller="com.Tarea3AD.Tarea3AD_PabloMerino.controller.paradaController">
+	<children>
+
+		<AnchorPane maxHeight="-1.0" maxWidth="-1.0"
+			prefHeight="290.0" prefWidth="520.0" VBox.vgrow="ALWAYS">
+			<children>
+				<Label alignment="CENTER" layoutX="14.0" layoutY="109.0"
+					style="&#10;" text="Exportar una parada" textAlignment="CENTER"
+					textFill="#5dbef4" wrapText="false">
+					<font>
+						<Font name="System Bold" size="20.0" />
+					</font>
+				</Label>
+				<Line endX="-100.0" endY="407.0" layoutX="401.0" layoutY="72.0"
+					startX="-100.0" startY="-72.0" stroke="#a4dcf4" />
+				<Label alignment="CENTER" layoutX="310.0" layoutY="14.0"
+					style="&#10;" text="Lista de paradas:" textAlignment="CENTER"
+					textFill="#5dbef4" wrapText="false">
+					<font>
+						<Font name="System Bold" size="20.0" />
+					</font>
+				</Label>
+				<Label alignment="CENTER" layoutX="15.0" layoutY="14.0"
+					style="&#10;" text="Bienvenido admin de parada"
+					textAlignment="CENTER" textFill="#5dbef4" wrapText="false">
+					<font>
+						<Font name="System Bold" size="20.0" />
+					</font>
+				</Label>
+				<Button fx:id="btnCerrarSesion" layoutX="89.0" layoutY="50.0"
+					mnemonicParsing="false" onAction="#logout"
+					style="-fx-background-color: red;" text="Cerrar Sesión"
+					textFill="WHITE">
+					<font>
+						<Font name="System Bold" size="12.0" />
+					</font>
+				</Button>
+				<Line endX="-110.0" endY="407.0" layoutX="110.0"
+					layoutY="-304.0" startX="190.5" startY="407.0" stroke="#a4dcf4" />
+				<TableView fx:id="tablaParadas" layoutX="310.0"
+					layoutY="88.0" prefHeight="161.0" prefWidth="391.0">
+					<columns>
+						<TableColumn fx:id="colId" prefWidth="50.0" text="Id" />
+						<TableColumn fx:id="colNombre" prefWidth="67.0"
+							text="Nombre" />
+						<TableColumn fx:id="colRegion" prefWidth="103.0"
+							text="Región" />
+						<TableColumn fx:id="colUsuario" text="Usuario" />
+						<TableColumn fx:id="colContrasena" prefWidth="90.0"
+							text="Contraseña" />
+					</columns>
+				</TableView>
+
+				<Button fx:id="btnExportar" layoutX="90.0" layoutY="169.0"
+					mnemonicParsing="false" prefHeight="25.0" prefWidth="65.0"
+					style="-fx-background-color: green;" text="Exportar"
+					textFill="WHITE">
+					<font>
+						<Font name="System Bold" size="12.0" />
+					</font>
+				</Button>
+				<Label layoutX="14.0" layoutY="139.0" prefHeight="25.0"
+					prefWidth="316.0"
+					text="Selecciona una parada de la lista y pulsa el boton &quot;Exportar&quot;."
+					textFill="#5dbef4">
+					<font>
+						<Font size="11.0" />
+					</font>
+				</Label>
+				<DatePicker layoutX="344.0" layoutY="50.0"
+					prefHeight="25.0" prefWidth="123.0" promptText="Fecha inicial" />
+				<DatePicker layoutX="495.0" layoutY="50.0"
+					prefHeight="25.0" prefWidth="123.0" promptText="Fecha final" />
+				<Button fx:id="btnBuscar" layoutX="635.0" layoutY="50.0"
+					mnemonicParsing="false" text="Buscar" />
+				<TableView fx:id="tablaPeregrinos" layoutX="310.0"
+					layoutY="284.0" prefHeight="202.0" prefWidth="391.0">
+					<columns>
+						<TableColumn fx:id="colIdPere" prefWidth="71.0" text="Id" />
+						<TableColumn fx:id="colNacionalidadPere" prefWidth="88.0"
+							text="Nacionalidad" />
+						<TableColumn fx:id="colNombrePere" prefWidth="79.0"
+							text="Nombre" />
+						<TableColumn fx:id="colCarnetPere" prefWidth="78.0"
+							text="Carnet" />
+						<TableColumn fx:id="colUsuarioPere" prefWidth="74.0"
+							text="Usuario" />
+					</columns>
+				</TableView>
+				<Label alignment="CENTER" layoutX="310.0" layoutY="252.0"
+					style="&#10;" text="Lista de peregrinos:" textAlignment="CENTER"
+					textFill="#5dbef4" wrapText="false">
+					<font>
+						<Font name="System Bold" size="20.0" />
+					</font>
+				</Label>
+				<Label alignment="CENTER" layoutX="14.0" layoutY="277.0"
+					style="&#10;" text="Alojar un peregrino" textAlignment="CENTER"
+					textFill="#5dbef4" wrapText="false">
+					<font>
+						<Font name="System Bold" size="20.0" />
+					</font>
+				</Label>
+				<Button fx:id="btnAlojar" layoutX="90.0" layoutY="332.0"
+					mnemonicParsing="false" prefHeight="25.0" prefWidth="65.0"
+					style="-fx-background-color: green;" text="Alojar" textFill="WHITE">
+					<font>
+						<Font name="System Bold" size="12.0" />
+					</font>
+				</Button>
+				<Label layoutX="8.0" layoutY="307.0" prefHeight="25.0"
+					prefWidth="316.0"
+					text="Selecciona un peregrino de la lista y pulsa el boton &quot;Alojar&quot;."
+					textFill="#5dbef4">
+					<font>
+						<Font size="11.0" />
+					</font>
+				</Label>
+				<Line endX="-110.0" endY="407.0" layoutX="110.0"
+					layoutY="-140.0" startX="190.5" startY="407.0" stroke="#a4dcf4" />
+			</children>
+		</AnchorPane>
+	</children>
+</VBox>
