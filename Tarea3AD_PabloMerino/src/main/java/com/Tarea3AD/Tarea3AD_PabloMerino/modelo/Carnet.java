@@ -1,6 +1,7 @@
 package com.Tarea3AD.Tarea3AD_PabloMerino.modelo;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -99,5 +100,26 @@ public class Carnet {
 		return "Carnet [id=" + id + ", fechaexp=" + fechaexp + ", distancia=" + distancia + ", nvips=" + nvips
 				+ ", paradaIncial=" + paradaIncial + "]";
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(distancia, fechaexp, id, nvips, paradaIncial);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Carnet other = (Carnet) obj;
+		return Double.doubleToLongBits(distancia) == Double.doubleToLongBits(other.distancia)
+				&& Objects.equals(fechaexp, other.fechaexp) && Objects.equals(id, other.id) && nvips == other.nvips
+				&& Objects.equals(paradaIncial, other.paradaIncial);
+	}
+	
+	
 
 }
