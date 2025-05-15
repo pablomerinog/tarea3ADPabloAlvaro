@@ -1,6 +1,7 @@
 package com.Tarea3AD.Tarea3AD_PabloMerino.modelo;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -108,5 +109,26 @@ public class Estancia {
 		return "Estancia [id=" + id + ", fecha=" + fecha + ", vip=" + vip + ", peregrino=" + peregrino + ", parada="
 				+ parada + "]";
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(fecha, id, parada, peregrino, vip);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Estancia other = (Estancia) obj;
+		return Objects.equals(fecha, other.fecha) && Objects.equals(id, other.id)
+				&& Objects.equals(parada, other.parada) && Objects.equals(peregrino, other.peregrino)
+				&& vip == other.vip;
+	}
+	
+	
 
 }
