@@ -177,9 +177,8 @@ public class adminController implements Initializable {
 			alertaError("Usuario ya existe", "El nombre de usuario ya está en uso. Elige otro.");
 			return;
 		}
-		
-		Optional<Parada> paradaExistenteOpt = paradaService.findByNombre(nombreParada);
-		Parada paradaExistente = paradaExistenteOpt.get();
+
+		Parada paradaExistente = paradaService.findByNombreAndRegion(nombreParada, region);
 		if (paradaExistente != null) {
 			alertaError("La parada ya existe", "Ya hay una parada con este nombre. Elige otro.");
 			return;

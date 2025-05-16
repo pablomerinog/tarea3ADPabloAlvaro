@@ -11,6 +11,9 @@ import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Usuario;
 public interface ParadaRepository extends JpaRepository<Parada, Long> {
 
 	Optional<Parada> findByNombre(String nombre);
+	Parada findByNombreAndRegion(String nombre, char region);
 
+	
+	
 //	List<Parada> findByidUsuario(Long idUsuario);
 }

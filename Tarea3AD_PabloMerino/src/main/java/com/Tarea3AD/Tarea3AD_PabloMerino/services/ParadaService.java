@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Parada;
-import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.PereParada;
 import com.Tarea3AD.Tarea3AD_PabloMerino.repository.ParadaRepository;
 
 @Service
@@ -43,6 +42,9 @@ public class ParadaService {
 
 	public Optional<Parada> findByNombre(String nombre) {
 	    return paradaRepository.findByNombre(nombre);
+	}
+	public Parada findByNombreAndRegion(String nombre, char region) {
+	    return paradaRepository.findByNombreAndRegion(nombre, region);
 	}
 	
 //	public List<Parada> findByidUsuario(Long idUsuario){
