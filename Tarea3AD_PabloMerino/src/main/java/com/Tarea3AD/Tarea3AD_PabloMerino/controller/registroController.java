@@ -11,7 +11,6 @@ import java.util.ResourceBundle;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
@@ -126,23 +125,43 @@ public class registroController implements Initializable {
 		}
 		Parada paradaInicial = paradaInicialOpt.get();
 
+		boolean valido = false;
+
 		String nombreUsuario = getNombreUsuario();
 		String contrasena = getContrasena1();
 
-		
+		String nombreCompletoTexto = getNombreCompleto();
+		String nacionalidad = comboNacionalidad.getValue();
+
+		if (nombreCompletoTexto.isBlank() || nombreUsuario.isBlank() || contrasena.isBlank() || nacionalidad == null
+				|| paradaInicialNombre == null) {
+			alertaError("Campos incompletos", "Por favor, rellena todos los campos.");
+			return;
+		}
+
+		if (nombreUsuario.contains(" ") || contrasena.contains(" ")) {
+			alertaError("Datos inválidos", "El nombre de usuario y la contraseña no deben contener espacios.");
+			return;
+		}
+
+		Usuario usuarioExistente = userService.findByNombreUsuario(nombreUsuario);
+		if (usuarioExistente != null) {
+			alertaError("Usuario ya existe", "El nombre de usuario ya está en uso. Elige otro.");
+			return;
+		}
+
 		Usuario usuario = new Usuario();
 		usuario.setnombreUsuario(nombreUsuario);
 		usuario.setContrasena(contrasena);
 		usuario.setPerfil("PEREGRINO");
-		
-		
+
 		Carnet carnet = new Carnet();
 		carnet.setDistancia(0.0);
 		carnet.setFechaexp(LocalDate.now());
 		carnet.setNvips(0);
 		carnet.setParadaIncial(paradaInicial);
 
-		String nacionalidad = comboNacionalidad.getValue();
+
 
 		Peregrino peregrino = new Peregrino();
 		peregrino.setNombrePeregrino(getNombreCompleto());
@@ -163,6 +182,7 @@ public class registroController implements Initializable {
 		alertaInfo("Registro correcto", "El peregrino se ha registrado con éxito.");
 
 		stageManager.switchScene(FxmlView.LOGIN);
+
 	}
 
 	public String getNombreUsuario() {

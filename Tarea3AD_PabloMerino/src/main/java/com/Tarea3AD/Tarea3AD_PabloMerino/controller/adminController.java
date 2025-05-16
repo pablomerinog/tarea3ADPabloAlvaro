@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
@@ -99,9 +98,9 @@ public class adminController implements Initializable {
 
 	private void cargarParadas() {
 		paradasList.clear();
-		
+
 		paradasList.addAll(paradaService.findAll());
-		
+
 		tablaParadas.setItems(paradasList);
 	}
 
@@ -161,13 +160,34 @@ public class adminController implements Initializable {
 	@FXML
 	private void registrarParada(ActionEvent event) throws IOException {
 
+		String nombreUsuario = getNombreUsuario();
+		String contrasena = getContrasena();
+		String nombreParada = getNombreParada();
+		char region = getRegion();
+		String responsable = getResponsable();
+
+		if (nombreUsuario.contains(" ") || contrasena.contains(" ")) {
+			alertaError("Datos inválidos", "El nombre de usuario y la contraseña no deben contener espacios.");
+			return;
+		}
+
+		Usuario usuarioExistente = userService.findByNombreUsuario(nombreUsuario);
+		if (usuarioExistente != null) {
+			alertaError("Usuario ya existe", "El nombre de usuario ya está en uso. Elige otro.");
+			return;
+		}
+
+		if (nombreUsuario.isBlank() || contrasena.isBlank() || nombreParada == null || region == ' '
+				|| responsable == null) {
+			alertaError("Campos incompletos", "Por favor, rellena todos los campos.");
+			return;
+		}
+
 		Usuario usuario = new Usuario();
 		usuario.setnombreUsuario(getNombreUsuario());
 		usuario.setContrasena(getContrasena());
 		usuario.setPerfil("PARADA");
 		Usuario nuevoUsuario = userService.save(usuario);
-
-		System.out.println(nuevoUsuario);
 
 		Parada parada = new Parada();
 		parada.setNombre(getNombreParada());
