@@ -2,6 +2,7 @@ package com.Tarea3AD.Tarea3AD_PabloMerino.controller;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -174,6 +175,13 @@ public class adminController implements Initializable {
 		Usuario usuarioExistente = userService.findByNombreUsuario(nombreUsuario);
 		if (usuarioExistente != null) {
 			alertaError("Usuario ya existe", "El nombre de usuario ya está en uso. Elige otro.");
+			return;
+		}
+		
+		Optional<Parada> paradaExistenteOpt = paradaService.findByNombre(nombreParada);
+		Parada paradaExistente = paradaExistenteOpt.get();
+		if (paradaExistente != null) {
+			alertaError("La parada ya existe", "Ya hay una parada con este nombre. Elige otro.");
 			return;
 		}
 
