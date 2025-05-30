@@ -12,105 +12,70 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="504.0" prefWidth="715.0"
-	xmlns="http://javafx.com/javafx/23.0.1"
-	xmlns:fx="http://javafx.com/fxml/1"
-	fx:controller="com.Tarea3AD.Tarea3AD_PabloMerino.controller.paradaController">
+<VBox prefHeight="504.0" prefWidth="715.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.Tarea3AD.Tarea3AD_PabloMerino.controller.paradaController">
 	<children>
 
-		<AnchorPane maxHeight="-1.0" maxWidth="-1.0"
-			prefHeight="290.0" prefWidth="520.0" VBox.vgrow="ALWAYS">
+		<AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="290.0" prefWidth="520.0" VBox.vgrow="ALWAYS">
 			<children>
-				<Label alignment="CENTER" layoutX="309.0" layoutY="20.0"
-					style="&#10;" text="Exportar una parada" textAlignment="CENTER"
-					textFill="#5dbef4" wrapText="false">
+				<Label alignment="CENTER" layoutX="309.0" layoutY="20.0" style="&#10;" text="Exportar una parada" textAlignment="CENTER" textFill="#5dbef4" wrapText="false">
 					<font>
 						<Font name="System Bold" size="20.0" />
 					</font>
 				</Label>
-				<Line endX="-100.0" endY="407.0" layoutX="401.0" layoutY="72.0"
-					startX="-100.0" startY="-72.0" stroke="#a4dcf4" />
-				<Label alignment="CENTER" layoutX="15.0" layoutY="14.0"
-					style="&#10;" text="Bienvenido admin de parada"
-					textAlignment="CENTER" textFill="#5dbef4" wrapText="false">
+				<Line endX="-100.0" endY="407.0" layoutX="401.0" layoutY="72.0" startX="-100.0" startY="-72.0" stroke="#a4dcf4" />
+				<Label alignment="CENTER" layoutX="15.0" layoutY="14.0" style="&#10;" text="Bienvenido admin de parada" textAlignment="CENTER" textFill="#5dbef4" wrapText="false">
 					<font>
 						<Font name="System Bold" size="20.0" />
 					</font>
 				</Label>
-				<Button fx:id="btnCerrarSesion" layoutX="89.0" layoutY="50.0"
-					mnemonicParsing="false" onAction="#logout"
-					style="-fx-background-color: red;" text="Cerrar Sesión"
-					textFill="WHITE">
+				<Button fx:id="btnCerrarSesion" layoutX="89.0" layoutY="50.0" mnemonicParsing="false" onAction="#logout" style="-fx-background-color: red;" text="Cerrar Sesión" textFill="WHITE">
 					<font>
 						<Font name="System Bold" size="12.0" />
 					</font>
 				</Button>
-				<Line endX="-110.0" endY="407.0" layoutX="110.0"
-					layoutY="-304.0" startX="190.5" startY="407.0" stroke="#a4dcf4" />
-				<TableView fx:id="tablaParadas" layoutX="306.0"
-					layoutY="165.0" prefHeight="312.0" prefWidth="391.0">
+				<Line endX="-110.0" endY="407.0" layoutX="110.0" layoutY="-304.0" startX="190.5" startY="407.0" stroke="#a4dcf4" />
+				<TableView fx:id="tablaParadas" layoutX="306.0" layoutY="165.0" prefHeight="312.0" prefWidth="391.0">
 					<columns>
 						<TableColumn fx:id="colId" prefWidth="50.0" text="Id" />
-						<TableColumn fx:id="colNombre" prefWidth="67.0"
-							text="Nombre" />
-						<TableColumn fx:id="colRegion" prefWidth="103.0"
-							text="Región" />
-						<TableColumn fx:id="colResp" prefWidth="103.0"
-							text="Responsable" />
+						<TableColumn fx:id="colNombre" prefWidth="67.0" text="Nombre" />
+						<TableColumn fx:id="colRegion" prefWidth="103.0" text="Región" />
+						<TableColumn fx:id="colResp" prefWidth="103.0" text="Responsable" />
 						<TableColumn fx:id="colUsuario" text="Usuario" />
-						<TableColumn fx:id="colContrasena" prefWidth="90.0"
-							text="Contraseña" />
+						<TableColumn fx:id="colContrasena" prefWidth="90.0" text="Contraseña" />
 					</columns>
 				</TableView>
 
-				<Button fx:id="btnExportar" layoutX="448.0" layoutY="79.0"
-					mnemonicParsing="false" prefHeight="25.0" prefWidth="65.0"
-					style="-fx-background-color: green;" text="Exportar"
-					textFill="WHITE">
+				<Button fx:id="btnExportar" layoutX="448.0" layoutY="79.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="65.0" style="-fx-background-color: green;" text="Exportar" textFill="WHITE">
 					<font>
 						<Font name="System Bold" size="12.0" />
 					</font>
 				</Button>
-				<Label layoutX="309.0" layoutY="50.0" prefHeight="25.0"
-					prefWidth="316.0"
-					text="Selecciona una parada de la lista y pulsa el boton &quot;Exportar&quot;."
-					textFill="#5dbef4">
+				<Label layoutX="309.0" layoutY="50.0" prefHeight="25.0" prefWidth="316.0" text="Selecciona una parada de la lista y pulsa el boton &quot;Exportar&quot;." textFill="#5dbef4">
 					<font>
 						<Font size="11.0" />
 					</font>
 				</Label>
-				<DatePicker layoutX="340.0" layoutY="127.0"
-					prefHeight="25.0" prefWidth="123.0" promptText="Fecha inicial" />
-				<DatePicker layoutX="491.0" layoutY="127.0"
-					prefHeight="25.0" prefWidth="123.0" promptText="Fecha final" />
-				<Button fx:id="btnBuscar" layoutX="631.0" layoutY="127.0"
-					mnemonicParsing="false" text="Buscar" />
-				<Label alignment="CENTER" layoutX="58.0" layoutY="112.0"
-					style="&#10;" text="Alojar un peregrino" textAlignment="CENTER"
-					textFill="#5dbef4" wrapText="false">
+				<DatePicker fx:id="fechaIni" layoutX="340.0" layoutY="127.0" prefHeight="25.0" prefWidth="123.0" promptText="Fecha inicial" />
+				<DatePicker fx:id="fechaFin" layoutX="491.0" layoutY="127.0" prefHeight="25.0" prefWidth="123.0" promptText="Fecha final" />
+				<Button fx:id="btnBuscar" layoutX="631.0" layoutY="127.0" mnemonicParsing="false" text="Buscar" onAction="#exportarDatosParada" />
+				<Label alignment="CENTER" layoutX="58.0" layoutY="112.0" style="&#10;" text="Sellar peregrino" textAlignment="CENTER" textFill="#5dbef4" wrapText="false">
 					<font>
 						<Font name="System Bold" size="20.0" />
 					</font>
 				</Label>
-				<Button fx:id="btnAlojar" layoutX="102.0" layoutY="233.0"
-					mnemonicParsing="false" onAction="#sellarParada" prefHeight="25.0"
-					prefWidth="65.0" style="-fx-background-color: green;" text="Alojar"
-					textFill="WHITE">
+				<Button fx:id="btnAlojar" layoutX="102.0" layoutY="321.0" mnemonicParsing="false" onAction="#sellarParada" prefHeight="25.0" prefWidth="65.0" style="-fx-background-color: green;" text="Alojar" textFill="WHITE">
 					<font>
 						<Font name="System Bold" size="12.0" />
 					</font>
 				</Button>
-				<Label layoutX="9.0" layoutY="140.0" prefHeight="25.0"
-					prefWidth="316.0"
-					text="Selecciona un peregrino de la lista y pulsa el boton &quot;Alojar&quot;."
-					textFill="#5dbef4">
+				<Label layoutX="9.0" layoutY="140.0" prefHeight="25.0" prefWidth="316.0" text="Selecciona un peregrino de la lista y pulsa el boton &quot;Alojar&quot;." textFill="#5dbef4">
 					<font>
 						<Font size="11.0" />
 					</font>
 				</Label>
-				<CheckBox fx:id="checkVIP" layoutX="93.0" layoutY="207.0"
-					mnemonicParsing="false" text="Estancia VIP" textFill="#5dbef4" />
-				<ComboBox layoutX="60.0" layoutY="173.0" prefWidth="150.0" fx:id="cmbxPeregrinos"/>
+				<CheckBox fx:id="checkVIP" layoutX="92.0" layoutY="265.0" mnemonicParsing="false" text="Estancia VIP" textFill="#5dbef4" />
+				<ComboBox fx:id="cmbxPeregrinos" layoutX="60.0" layoutY="173.0" prefWidth="150.0" />
+            <CheckBox fx:id="checkAlojar" layoutX="93.0" layoutY="223.0" mnemonicParsing="false" text="Alojar" textFill="#5dbef4" />
 			</children>
 		</AnchorPane>
 	</children>

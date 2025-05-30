@@ -1,15 +1,15 @@
 package com.Tarea3AD.Tarea3AD_PabloMerino.controller;
 
 import java.io.File;
-
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-
+import java.util.Comparator;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -35,6 +35,7 @@ import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.PereParada;
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Peregrino;
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Sesion;
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Usuario;
+import com.Tarea3AD.Tarea3AD_PabloMerino.services.EstanciaService;
 import com.Tarea3AD.Tarea3AD_PabloMerino.services.PeregrinoService;
 import com.Tarea3AD.Tarea3AD_PabloMerino.services.UserService;
 import com.Tarea3AD.Tarea3AD_PabloMerino.vistas.FxmlView;
@@ -60,8 +61,7 @@ public class peregrinoController implements Initializable {
 
 	@FXML
 	private TextField usuario;
-	@FXML
-	private TextField txtId;
+
 	@FXML
 	private TextField txtFecha;
 	@FXML
@@ -78,6 +78,10 @@ public class peregrinoController implements Initializable {
 
 	@Autowired
 	private PeregrinoService pereService;
+
+	@Autowired
+	private EstanciaService estanciaService;
+
 	@Lazy
 	@Autowired
 	private StageManager stageManager;
@@ -87,7 +91,7 @@ public class peregrinoController implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-
+		rellenarDatos();
 	}
 
 	public void alertaInfo(String title, String message) {
@@ -179,12 +183,16 @@ public class peregrinoController implements Initializable {
 			int ordenParada = 1;
 
 			Set<PereParada> cjtoparadas = peregrino.getPereParadas();
+//			Set<PereParada> paraPeregrino = new TreeSet<>(Comparator.comparing(PereParada::getId));
+//			paraPeregrino.addAll(cjtoparadas);
+//			System.out.println(paraPeregrino);
+
 			for (PereParada pp : cjtoparadas) {
 				Parada parada = pp.getParada();
 				Element paradaElement = documento.createElement("parada");
 
 				Element orden = documento.createElement("orden");
-				orden.appendChild(documento.createTextNode("" + ordenParada));/// String.valueOf(parada.getId())));
+				orden.appendChild(documento.createTextNode("" + ordenParada));
 				paradaElement.appendChild(orden);
 
 				Element nombreParada = documento.createElement("nombre");
@@ -199,6 +207,11 @@ public class peregrinoController implements Initializable {
 				ordenParada++;
 			}
 			carnet.appendChild(paradas);
+
+			Set<Estancia> estanciasLio = estanciaService.findByPeregrinoId(peregrino.getId());
+			Set<Estancia> estanciasPeregrino = new TreeSet<>(Comparator.comparing(Estancia::getId));
+			estanciasPeregrino.addAll(estanciasLio);
+			peregrino.setEstancias(estanciasPeregrino);
 
 			Element estancias = documento.createElement("estancias");
 			for (Estancia estancia : peregrino.getEstancias()) {
@@ -246,4 +259,21 @@ public class peregrinoController implements Initializable {
 		return correcto;
 	}
 
+	private void rellenarDatos() {
+		Usuario usuario = sesion.getUsuIniciado();
+//		String nombrePeregrino= usuario.getnombreUsuario();
+//		Long idPeregrino = usuario.getId();
+//		System.out.println(idPeregrino);
+//		System.out.println(nombrePeregrino);
+		Optional<Peregrino> peregrinoOpt = pereService.findByUsuario(usuario);
+//		Optional<Peregrino> peregrinoOpt = pereService.findBynombrePeregrino(nombrePeregrino);
+//		System.out.println("Peregrino"+peregrinoOpt.get());
+
+		Peregrino peregrino = peregrinoOpt.get();
+
+		txtNombre.setText(peregrino.getNombrePeregrino());
+		txtDistancia.setText(String.valueOf(peregrino.getCarnet().getDistancia()));
+		txtFecha.setText(String.valueOf(peregrino.getCarnet().getFechaexp()));
+		txtNacionalidad.setText(peregrino.getNacionalidad());
+	}
 }

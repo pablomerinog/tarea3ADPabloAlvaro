@@ -90,6 +90,7 @@ public class registroController implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		ObservableList<String> nacionalidades = cargarNacionalidadesDesdeXML();
+		
 		comboNacionalidad.setItems(nacionalidades);
 		cargarParadas();
 	}
@@ -117,13 +118,13 @@ public class registroController implements Initializable {
 	private void registrar(ActionEvent event) throws IOException {
 
 		String paradaInicialNombre = comboParadas.getValue();
-		Optional<Parada> paradaInicialOpt = paradaService.findByNombre(paradaInicialNombre);
 
-		if (paradaInicialOpt.isEmpty()) {
-			alertaError("Error", "Parada inicial no válida.");
-			return;
-		}
-		Parada paradaInicial = paradaInicialOpt.get();
+		String[] partes = paradaInicialNombre.split(",");
+
+		String nombre = partes[0];
+		char region = partes[1].charAt(0);
+
+		Parada paradaInicial = paradaService.findByNombreAndRegion(nombre, region);
 
 		boolean valido = false;
 
@@ -160,8 +161,6 @@ public class registroController implements Initializable {
 		carnet.setFechaexp(LocalDate.now());
 		carnet.setNvips(0);
 		carnet.setParadaIncial(paradaInicial);
-
-
 
 		Peregrino peregrino = new Peregrino();
 		peregrino.setNombrePeregrino(getNombreCompleto());
@@ -238,11 +237,15 @@ public class registroController implements Initializable {
 	}
 
 	private void cargarParadas() {
+
 		List<Parada> paradas = paradaService.findAll();
 		List<String> nombresParadas = new ArrayList<>();
+		List<String> regionesParadas = new ArrayList<>();
 		for (Parada p : paradas) {
-			nombresParadas.add(p.getNombre());
+			nombresParadas.add(p.getNombre() + "," + Character.toString(p.getRegion()));
+
 		}
 		comboParadas.setItems(FXCollections.observableArrayList(nombresParadas));
+
 	}
 }

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
+
+<VBox prefHeight="504.0" prefWidth="715.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.Tarea3AD.Tarea3AD_PabloMerino.controller.adminController">
+	<children>
+
+		<AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="290.0" prefWidth="520.0" VBox.vgrow="ALWAYS">
+			<children>
+				<Label alignment="CENTER" layoutX="14.0" layoutY="109.0" style="&#10;" text="Registra una nueva parada" textAlignment="CENTER" textFill="#5dbef4" wrapText="false">
+					<font>
+						<Font name="System Bold" size="20.0" />
+					</font>
+				</Label>
+				<Line endX="-100.0" endY="407.0" layoutX="394.0" layoutY="72.0" startX="-100.0" startY="-72.0" stroke="#a4dcf4" />
+				<Label layoutX="14.0" layoutY="136.0" text="Nombre de la parada: " />
+				<Label layoutX="16.0" layoutY="188.0" prefHeight="17.0" prefWidth="119.0" text="Región de la parada: " />
+				<TextField fx:id="nombreParada" layoutX="12.0" layoutY="154.0" promptText="Nombre de parada:" />
+				<TextField fx:id="regionParada" layoutX="14.0" layoutY="210.0" promptText="Región de parada: " />
+				<Label layoutX="15.0" layoutY="294.0" prefHeight="17.0" prefWidth="259.0" text="Nombre de ususario del responsable de parada:" />
+				<TextField fx:id="usuarioParada" layoutX="14.0" layoutY="311.0" prefHeight="25.0" prefWidth="251.0" promptText="Usuario de administrador de parada:" />
+				<Label layoutX="14.0" layoutY="345.0" prefHeight="17.0" prefWidth="280.0" text="Contraseña de ususario del responsable de parada:" />
+				<TextField fx:id="contrasenaParada" layoutX="14.0" layoutY="362.0" prefHeight="25.0" prefWidth="248.0" promptText="Contraseña de administrador de parada:" />
+				<Label alignment="CENTER" layoutX="310.0" layoutY="14.0" style="&#10;" text="Lista de paradas:" textAlignment="CENTER" textFill="#5dbef4" wrapText="false">
+					<font>
+						<Font name="System Bold" size="20.0" />
+					</font>
+				</Label>
+				<Label alignment="CENTER" layoutX="23.0" layoutY="13.0" style="&#10;" text="Bienvenido Administrador" textAlignment="CENTER" textFill="#5dbef4" wrapText="false">
+					<font>
+						<Font name="System Bold" size="20.0" />
+					</font>
+				</Label>
+				<Button fx:id="btnCerrarSesion" layoutX="89.0" layoutY="50.0" mnemonicParsing="false" onAction="#logout" style="-fx-background-color: red;" text="Cerrar Sesión" textFill="WHITE">
+					<font>
+						<Font name="System Bold" size="12.0" />
+					</font>
+				</Button>
+				<Line endX="-110.0" endY="407.0" layoutX="110.0" layoutY="-304.0" startX="183.5" startY="407.0" stroke="#a4dcf4" />
+			<TableView fx:id="tablaParadas" layoutX="310.0" layoutY="53.0" prefHeight="404.0" prefWidth="391.0">
+					<columns>
+						<TableColumn prefWidth="50.0" text="Id" fx:id="colId"/>
+						<TableColumn fx:id="colNombre" prefWidth="50.0" text="Nombre" />
+						<TableColumn fx:id="colRegion" prefWidth="87.0" text="Región" />
+						<TableColumn fx:id="colResp" prefWidth="87.0" text="Responsable" />
+						<TableColumn fx:id="colUsuario" prefWidth="65.0" text="Usuario" />
+						<TableColumn minWidth="7.0" prefWidth="61.0" text="Editar" />
+					</columns>
+				</TableView>  
+				<Button fx:id="btnCancelar" layoutX="131.0" layoutY="399.0" mnemonicParsing="false" onAction="#limpiarCampos" style="-fx-background-color: red;" text="Cancelar" textFill="WHITE">
+					<font>
+						<Font name="System Bold" size="12.0" />
+					</font>
+				</Button>
+				<Button fx:id="btnRegistrar" layoutX="42.0" layoutY="399.0" mnemonicParsing="false" onAction="#registrarParada" style="-fx-background-color: green;" text="Registrar" textFill="WHITE">
+					<font>
+						<Font name="System Bold" size="12.0" />
+					</font>
+				</Button>
+            <Label layoutX="16.0" layoutY="240.0" prefHeight="17.0" prefWidth="213.0" text="Nombre del responsable de parada:" />
+            <TextField fx:id="nombreResp" layoutX="14.0" layoutY="262.0" promptText="Nombre responsable: " />
+			</children>
+		</AnchorPane>
+	</children>
+</VBox>

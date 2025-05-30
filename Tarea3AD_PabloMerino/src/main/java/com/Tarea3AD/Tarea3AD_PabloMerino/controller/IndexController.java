@@ -59,8 +59,7 @@ public class IndexController implements Initializable {
 		String adminPass = env.getProperty("passwadmin");
 
 		if (getUsername().equals(adminUser) && getContrasena().equals(adminPass)) {
-			// alertaInfo("Has iniciado sesión como ADMIN", "Bienvenido: " + getUsername() +
-			// "!");
+			
 			stageManager.switchScene(FxmlView.ADMIN);
 			return;
 		}
@@ -69,10 +68,7 @@ public class IndexController implements Initializable {
 
 			Usuario usuario = userService.findByNombreUsuarioAndContrasena(getUsername(), getContrasena());
 			sesion.setUsuIniciado(usuario);
-			// alertaInfo("Has iniciado sesion como: " +
-			// usuario.getnombreUsuario(),"Bienvenido: " + usuario.getnombreUsuario() +
-			// "!");
-
+			
 			switch (usuario.getPerfil().toUpperCase()) {
 			case "ADMIN" -> stageManager.switchScene(FxmlView.ADMIN);
 			case "PEREGRINO" -> stageManager.switchScene(FxmlView.PEREGRINO);

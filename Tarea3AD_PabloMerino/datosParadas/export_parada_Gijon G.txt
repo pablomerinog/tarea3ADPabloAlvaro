@@ -1,0 +1,11 @@
+Datos de la Parada
+ID: 2
+Nombre: Gijon
+Región: G
+
+Rango de fechas: 2025-05-29 a 2025-05-30
+
+Estancias:
+ID Estancia, Nombre Peregrino, Fecha, VIP
+2, Pablo Merino, 2025-05-29, No
+3, Oskar Aguilera, 2025-05-30, Sí

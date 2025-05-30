@@ -1,12 +1,14 @@
 package com.Tarea3AD.Tarea3AD_PabloMerino.services;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Carnet;
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Estancia;
+import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Parada;
 import com.Tarea3AD.Tarea3AD_PabloMerino.repository.EstanciaRepository;
 
 @Service
@@ -42,5 +44,14 @@ public class EstanciaService {
 	public void deleteInBatch(List<Estancia> estancia) {
 		estanciaRepository.deleteAll(estancia);
 	}
-
+	
+	public Set<Estancia>findByPeregrinoId(Long idPere){
+		return estanciaRepository.findByPeregrinoId(idPere);
+	}
+	
+	public List<Estancia> findByParadaAndFechaBetween(Parada parada, LocalDate fechaInicio, LocalDate fechaFin) {
+		return estanciaRepository.findByParadaAndFechaBetween(parada, fechaInicio, fechaFin);
+	}
+	
+	
 }

@@ -14,7 +14,6 @@ public class ParadaService {
 
 	@Autowired
 	private ParadaRepository paradaRepository;
-	
 
 	public Parada save(Parada entity) {
 		return paradaRepository.save(entity);
@@ -40,21 +39,16 @@ public class ParadaService {
 		return paradaRepository.findAll();
 	}
 
-	public Optional<Parada> findByNombre(String nombre) {
-	    return paradaRepository.findByNombre(nombre);
-	}
 	public Parada findByNombreAndRegion(String nombre, char region) {
-	    return paradaRepository.findByNombreAndRegion(nombre, region);
+		return paradaRepository.findByNombreAndRegion(nombre, region);
 	}
-	
-//	public List<Parada> findByidUsuario(Long idUsuario){
-//		return paradaRepository.findByidUsuario(idUsuario);
-//	}
-//	
+
+	public Parada findByIdUsuario(Long usuario) {
+		return paradaRepository.findByIdUsuario(usuario);
+	}
+
 	public void deleteInBatch(List<Parada> users) {
 		paradaRepository.deleteAll(users);
 	}
-	
-	
 
 }

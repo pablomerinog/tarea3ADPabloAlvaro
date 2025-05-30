@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><?xml-stylesheet type="text/xml" href="test.xsl"?>
+<carnet>
+	<id>2</id>
+	<fechaexp>01/05/2025</fechaexp>
+	<expedidoen>Toledo</expedidoen>
+	<peregrino>
+		<nombre>alvaro</nombre>
+		<nacionalidad>Alemania</nacionalidad>
+	</peregrino>
+	<hoy>01/05/2025</hoy>
+	<distanciatotal>0,0</distanciatotal>
+</carnet>
