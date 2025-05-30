@@ -1,33 +1,33 @@
 package com.Tarea3AD.Tarea3AD_PabloMerino.config;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
+import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.ConjuntoContratado;
+import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Servicio;
+import com.Tarea3AD.Tarea3AD_PabloMerino.repository.Db4oRepository;
+import com.db4o.Db4oEmbedded;
+import com.db4o.ObjectContainer;
 
 @Configuration
 public class ObjectDBConfig {
 
-    @Value("${odb.path}")
-    private String odbPath;
+	@Configuration
+	public class Db4oConfig {
 
-    @Bean
-    public EntityManagerFactory entityManagerFactory() {
-        Map<String, String> props = new HashMap<>();
-        props.put("javax.persistence.jdbc.url", odbPath);
-        props.put("javax.persistence.provider", "com.objectdb.jpa.Provider");
+		@Bean(destroyMethod = "close")
+		public ObjectContainer db4oContainer() {
+			return Db4oEmbedded.openFile(Db4oEmbedded.newConfiguration(), "peregrinos.db4o");
+		}
 
-        return Persistence.createEntityManagerFactory("objectdbPU", props);
-    }
+		@Bean
+		public Db4oRepository<Servicio> servicioDb4oRepository(ObjectContainer db4oContainer) {
+			return new Db4oRepository<>(db4oContainer, Servicio.class);
+		}
 
-    @Bean
-    public EntityManager entityManager(EntityManagerFactory emf) {
-        return emf.createEntityManager();
-    }
+		@Bean
+		public Db4oRepository<ConjuntoContratado> conjuntoContratadoDb4oRepository(ObjectContainer db4oContainer) {
+			return new Db4oRepository<>(db4oContainer, ConjuntoContratado.class);
+		}
+	}
 }

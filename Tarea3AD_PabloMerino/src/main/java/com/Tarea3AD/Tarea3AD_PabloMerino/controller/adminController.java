@@ -2,7 +2,6 @@ package com.Tarea3AD.Tarea3AD_PabloMerino.controller;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,11 +9,21 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 
 import com.Tarea3AD.Tarea3AD_PabloMerino.config.StageManager;
+import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.ConjuntoContratado;
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Parada;
+import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Servicio;
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Usuario;
 import com.Tarea3AD.Tarea3AD_PabloMerino.services.ParadaService;
+
 import com.Tarea3AD.Tarea3AD_PabloMerino.services.UserService;
+import com.Tarea3AD.Tarea3AD_PabloMerino.services.db4oService;
 import com.Tarea3AD.Tarea3AD_PabloMerino.vistas.FxmlView;
+
+import com.db4o.ObjectContainer;
+import com.db4o.query.Query;
+import com.db4o.Db4oEmbedded;
+
+import java.util.List;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -79,6 +88,9 @@ public class adminController implements Initializable {
 
 	@Autowired
 	private ParadaService paradaService;
+
+	@Autowired
+	private db4oService db4oService;
 
 	@Lazy
 	@Autowired
@@ -208,6 +220,41 @@ public class adminController implements Initializable {
 		alertaInfo("Registro correcto", "La parada se ha registrado con éxito.");
 
 		paradasList.add(nuevaParada);
+	//*************************************//
+///////////PRUEBA DE DB4O
+		// Crear y guardo el servicio
+		Servicio nuevoServicio = new Servicio(1L, "Limpieza", 25.50);
+		db4oService.guardarServicio(nuevoServicio);
+		
+		//Creo y guardo el cc
+		ConjuntoContratado cc = new ConjuntoContratado(1L, 3.5, 'B',null);
+		db4oService.guardarConjunto(cc);
+		
+		// Buscarlo de nuevo para asegurarnos que está guardado
+		Servicio servicioGuardado = db4oService.buscarServicioPorId(nuevoServicio.getIdServicio());
+		// Mostrar por consola
+		if (servicioGuardado != null) {
+			System.out.println("Servicio guardado:");
+			System.out.println("ID: " + servicioGuardado.getIdServicio());
+			System.out.println("Nombre: " + servicioGuardado.getNombreServicio());
+			System.out.println("Precio: " + servicioGuardado.getPrecio());
+		} else {
+			System.out.println("No se encontró el servicio después de guardarlo.");
+		}
+		
+		// Buscarlo de nuevo para asegurarnos que está guardado
+			ConjuntoContratado ccc = db4oService.buscarConjuntoPorId(cc.getId());
+				// Mostrar por consola
+				if (servicioGuardado != null) {
+					System.out.println("Servicio guardado:");
+					System.out.println("ID: " + ccc.getId());
+					System.out.println("Precio: " + ccc.getPrecioTotal());
+					System.out.println("Modo de pago: " + ccc.getModoPago());
+					System.out.println("Extra: " + ccc.getExtra());
+				} else {
+					System.out.println("No se encontró el servicio después de guardarlo.");
+				}
+
 	}
 
 }
