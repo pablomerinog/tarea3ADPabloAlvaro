@@ -58,4 +58,11 @@ public class db4oService {
 		});
 
 	}
+	
+	public List<Servicio> listarServiciosPorIdParada(Long idParada) {
+	    return servicioRepo.findAll().stream()
+	        .filter(servicio -> servicio.getIdParadas() != null && servicio.getIdParadas().contains(idParada))
+	        .toList();
+	}
+
 }

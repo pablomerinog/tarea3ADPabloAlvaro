@@ -20,6 +20,7 @@ import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Estancia;
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Parada;
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.PereParada;
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Peregrino;
+import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Servicio;
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Sesion;
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Usuario;
 import com.Tarea3AD.Tarea3AD_PabloMerino.services.CarnetService;
@@ -28,6 +29,7 @@ import com.Tarea3AD.Tarea3AD_PabloMerino.services.ParadaService;
 import com.Tarea3AD.Tarea3AD_PabloMerino.services.PereParadaService;
 import com.Tarea3AD.Tarea3AD_PabloMerino.services.PeregrinoService;
 import com.Tarea3AD.Tarea3AD_PabloMerino.services.UserService;
+import com.Tarea3AD.Tarea3AD_PabloMerino.services.db4oService;
 import com.Tarea3AD.Tarea3AD_PabloMerino.vistas.FxmlView;
 
 import javafx.collections.FXCollections;
@@ -108,6 +110,9 @@ public class paradaController implements Initializable {
 	@FXML
 	private ComboBox<String> cmbxPeregrinos;
 
+	@FXML
+	private ComboBox<String> cmbxServicios;
+	
 	@Autowired
 	private UserService userService;
 
@@ -124,6 +129,9 @@ public class paradaController implements Initializable {
 	@Lazy
 	@Autowired
 	private StageManager stageManager;
+	
+	@Autowired
+	private db4oService db4oService;
 
 	private ObservableList<Parada> paradaList = FXCollections.observableArrayList();
 
@@ -140,12 +148,16 @@ public class paradaController implements Initializable {
 
 		cargarPeregrinos();
 		cargarParadas();
+		cargarServicios();
 
 		checkVIP.setDisable(true);
+		cmbxServicios.setDisable(true);
 		checkAlojar.selectedProperty().addListener((obs, wasSelected, isNowSelected) -> {
 			checkVIP.setDisable(!isNowSelected);
+			cmbxServicios.setDisable(!isNowSelected);
 			if (!isNowSelected) {
 				checkVIP.setSelected(false);
+				cmbxServicios.getSelectionModel().clearSelection();
 			}
 		});
 	}
@@ -301,4 +313,16 @@ public class paradaController implements Initializable {
 		}
 	}
 
+	public void cargarServicios() {
+		Usuario usuario = sesion.getUsuIniciado();
+
+		Parada parada = paradasService.findByIdUsuario(usuario.getId());
+		
+		List<Servicio> servicios = db4oService.listarServiciosPorIdParada(parada.getId()); // o el nombre de la parada seleccionada
+		for (Servicio servicio : servicios) {
+			cmbxServicios.getItems().add(servicio.getNombreServicio());
+		}
+		
+	}
+	
 }

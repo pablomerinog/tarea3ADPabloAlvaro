@@ -19,12 +19,6 @@ import com.Tarea3AD.Tarea3AD_PabloMerino.services.UserService;
 import com.Tarea3AD.Tarea3AD_PabloMerino.services.db4oService;
 import com.Tarea3AD.Tarea3AD_PabloMerino.vistas.FxmlView;
 
-import com.db4o.ObjectContainer;
-import com.db4o.query.Query;
-import com.db4o.Db4oEmbedded;
-
-import java.util.List;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -47,6 +41,12 @@ public class adminController implements Initializable {
 	private Button btnCancelar;
 
 	@FXML
+	private Button btnAñadir;
+
+	@FXML
+	private Button cancelarServicio;
+
+	@FXML
 	private Button btnRegistrar;
 
 	@FXML
@@ -65,20 +65,25 @@ public class adminController implements Initializable {
 	private TextField contrasenaParada;
 
 	@FXML
-	private TableView<Parada> tablaParadas;
+	private TextField nombreServicio;
 
 	@FXML
-	private TableColumn<Parada, Long> colId;
+	private TextField precioServicio;
 
 	@FXML
-	private TableColumn<Parada, String> colNombre;
+	private TextField idServicio;
 
 	@FXML
-	private TableColumn<Parada, String> colRegion;
+	private TableView<Servicio> tablaServicios;
+
 	@FXML
-	private TableColumn<Parada, Long> colResp;
+	private TableColumn<Servicio, Long> colId;
+
 	@FXML
-	private TableColumn<Usuario, String> colUsuario;
+	private TableColumn<Servicio, String> colNombre;
+
+	@FXML
+	private TableColumn<Servicio, Double> colPrecio;
 
 	@FXML
 	private TableColumn<Parada, Void> colEditar;
@@ -96,25 +101,23 @@ public class adminController implements Initializable {
 	@Autowired
 	private StageManager stageManager;
 
-	private ObservableList<Parada> paradasList = FXCollections.observableArrayList();
+	private ObservableList<Servicio> serviciosList = FXCollections.observableArrayList();
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		colId.setCellValueFactory(new PropertyValueFactory<>("id"));
-		colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
-		colRegion.setCellValueFactory(new PropertyValueFactory<>("region"));
-		colResp.setCellValueFactory(new PropertyValueFactory<>("responsable"));
-		colUsuario.setCellValueFactory(new PropertyValueFactory<>("idUsuario"));
+		colId.setCellValueFactory(new PropertyValueFactory<>("idServicio"));
+		colNombre.setCellValueFactory(new PropertyValueFactory<>("nombreServicio"));
+		colPrecio.setCellValueFactory(new PropertyValueFactory<>("precio"));
 
-		cargarParadas();
+		cargarServicios();
 	}
 
-	private void cargarParadas() {
-		paradasList.clear();
+	private void cargarServicios() {
+		serviciosList.clear();
 
-		paradasList.addAll(paradaService.findAll());
+		serviciosList.addAll(db4oService.listarServicios());
 
-		tablaParadas.setItems(paradasList);
+		tablaServicios.setItems(serviciosList);
 	}
 
 	public void alertaInfo(String title, String message) {
@@ -160,6 +163,36 @@ public class adminController implements Initializable {
 
 	public String getNombreUsuario() {
 		return usuarioParada.getText();
+	}
+
+	public Long getIdServicio() {
+		String id = idServicio.getText();
+		if (id != null && !id.isEmpty()) {
+			try {
+				return Long.parseLong(id);
+			} catch (NumberFormatException e) {
+				System.out.println("Error: el ID no es un número válido.");
+				return null;
+			}
+		}
+		return null;
+	}
+
+	public Double getPrecioServicio() {
+		String precioStr = precioServicio.getText();
+		if (precioStr != null && !precioStr.isEmpty()) {
+			try {
+				return Double.parseDouble(precioStr);
+			} catch (NumberFormatException e) {
+				System.out.println("Error: el precio no es un número válido.");
+				return null;
+			}
+		}
+		return null;
+	}
+
+	public String getNombreServicio() {
+		return nombreServicio.getText();
 	}
 
 	public String getResponsable() {
@@ -219,42 +252,19 @@ public class adminController implements Initializable {
 		limpiarCampos();
 		alertaInfo("Registro correcto", "La parada se ha registrado con éxito.");
 
-		paradasList.add(nuevaParada);
-	//*************************************//
-///////////PRUEBA DE DB4O
-		// Crear y guardo el servicio
-		Servicio nuevoServicio = new Servicio(1L, "Limpieza", 25.50);
-		db4oService.guardarServicio(nuevoServicio);
-		
-		//Creo y guardo el cc
-		ConjuntoContratado cc = new ConjuntoContratado(1L, 3.5, 'B',null);
-		db4oService.guardarConjunto(cc);
-		
-		// Buscarlo de nuevo para asegurarnos que está guardado
-		Servicio servicioGuardado = db4oService.buscarServicioPorId(nuevoServicio.getIdServicio());
-		// Mostrar por consola
-		if (servicioGuardado != null) {
-			System.out.println("Servicio guardado:");
-			System.out.println("ID: " + servicioGuardado.getIdServicio());
-			System.out.println("Nombre: " + servicioGuardado.getNombreServicio());
-			System.out.println("Precio: " + servicioGuardado.getPrecio());
-		} else {
-			System.out.println("No se encontró el servicio después de guardarlo.");
-		}
-		
-		// Buscarlo de nuevo para asegurarnos que está guardado
-			ConjuntoContratado ccc = db4oService.buscarConjuntoPorId(cc.getId());
-				// Mostrar por consola
-				if (servicioGuardado != null) {
-					System.out.println("Servicio guardado:");
-					System.out.println("ID: " + ccc.getId());
-					System.out.println("Precio: " + ccc.getPrecioTotal());
-					System.out.println("Modo de pago: " + ccc.getModoPago());
-					System.out.println("Extra: " + ccc.getExtra());
-				} else {
-					System.out.println("No se encontró el servicio después de guardarlo.");
-				}
-
 	}
 
+	@FXML
+	private void registrarServicio(ActionEvent event) throws IOException {
+//falta añadir el servicio a una parada
+		String nombreServicio = getNombreServicio();
+		Long id = getIdServicio();
+		Double precio = getPrecioServicio();
+
+		Servicio nuevoServicio = new Servicio(id, nombreServicio, precio);
+		db4oService.guardarServicio(nuevoServicio);
+		
+		serviciosList.add(nuevoServicio);
+		
+	}
 }

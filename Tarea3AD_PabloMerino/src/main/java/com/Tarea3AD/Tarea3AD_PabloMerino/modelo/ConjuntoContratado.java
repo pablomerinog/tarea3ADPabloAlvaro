@@ -1,5 +1,6 @@
 package com.Tarea3AD.Tarea3AD_PabloMerino.modelo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ConjuntoContratado {
@@ -8,9 +9,13 @@ public class ConjuntoContratado {
     private char modoPago;
     private String extra = null;
 
-    private List<Servicio> servicios;
+    List<Long> servicios = new ArrayList<>();
 
-	public ConjuntoContratado(Long id, double precioTotal, char modoPago, String extra, List<Servicio> servicios) {
+
+	
+	
+
+	public ConjuntoContratado(Long id, double precioTotal, char modoPago, String extra, List<Long> servicios) {
 		super();
 		this.id = id;
 		this.precioTotal = precioTotal;
@@ -18,8 +23,8 @@ public class ConjuntoContratado {
 		this.extra = extra;
 		this.servicios = servicios;
 	}
-	
-	
+
+
 
 	public ConjuntoContratado(Long id, double precioTotal, char modoPago, String extra) {
 		super();
@@ -67,13 +72,19 @@ public class ConjuntoContratado {
 		this.extra = extra;
 	}
 
-	public List<Servicio> getServicios() {
+	
+
+	public List<Long> getServicios() {
 		return servicios;
 	}
 
-	public void setServicios(List<Servicio> servicios) {
+
+
+	public void setServicios(List<Long> servicios) {
 		this.servicios = servicios;
 	}
+
+
 
 	@Override
 	public String toString() {
