@@ -1,17 +1,18 @@
 package com.Tarea3AD.Tarea3AD_PabloMerino.repository;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Servicio;
+import com.Tarea3AD.Tarea3AD_PabloMerino.utils.copy.ContadorID;
 import com.db4o.ObjectContainer;
 import com.db4o.ObjectSet;
 import com.db4o.query.Predicate;
 
 public class Db4oRepository<T> {
-
+	
 	private final ObjectContainer db;
 	private final Class<T> clazz;
+	
+	
 
 	public Db4oRepository(ObjectContainer db, Class<T> clazz) {
 		this.db = db;
@@ -37,6 +38,14 @@ public class Db4oRepository<T> {
 		db.commit();
 	}
 
-	
+	public void update(T objetoActualizado, Predicate<T> criterio) {
+		ObjectSet<T> result = db.query(criterio);
+		if (!result.isEmpty()) {
+			T original = result.next();
+			db.delete(original);
+			db.store(objetoActualizado);
+		}
+	}
+
 
 }

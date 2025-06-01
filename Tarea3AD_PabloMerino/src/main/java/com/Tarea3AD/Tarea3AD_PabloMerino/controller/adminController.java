@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Usuario;
 import com.Tarea3AD.Tarea3AD_PabloMerino.services.ParadaService;
 import com.Tarea3AD.Tarea3AD_PabloMerino.services.UserService;
 import com.Tarea3AD.Tarea3AD_PabloMerino.services.db4oService;
+import com.Tarea3AD.Tarea3AD_PabloMerino.utils.copy.ContadorID;
 import com.Tarea3AD.Tarea3AD_PabloMerino.vistas.FxmlView;
 
 import javafx.collections.FXCollections;
@@ -27,13 +29,20 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.GridPane;
+import javafx.util.Pair;
 
 @Controller
 public class adminController implements Initializable {
@@ -114,6 +123,9 @@ public class adminController implements Initializable {
 	@Autowired
 	private StageManager stageManager;
 
+	
+	private ContadorID contador;
+
 	private ObservableList<ServicioFX> serviciosList = FXCollections.observableArrayList();
 
 	@Override
@@ -123,7 +135,26 @@ public class adminController implements Initializable {
 		colPrecio.setCellValueFactory(new PropertyValueFactory<>("precio"));
 		colSeleccionar.setCellValueFactory(cellData -> cellData.getValue().seleccionadoProperty());
 		colSeleccionar.setCellFactory(CheckBoxTableCell.forTableColumn(colSeleccionar));
+		colEditar.setCellFactory(param -> new TableCell<>() {
+			private final Button btn = new Button("Editar");
 
+			{
+				btn.setOnAction(event -> {
+					ServicioFX servicioFX = getTableView().getItems().get(getIndex());
+					mostrarDialogoEdicion(servicioFX);
+				});
+			}
+
+			@Override
+			protected void updateItem(Void item, boolean empty) {
+				super.updateItem(item, empty);
+				if (empty) {
+					setGraphic(null);
+				} else {
+					setGraphic(btn);
+				}
+			}
+		});
 		cargarServicios();
 		cargarParadas();
 		tablaServicios.setEditable(true);
@@ -148,6 +179,95 @@ public class adminController implements Initializable {
 				setText(empty || item == null ? null : item.getNombre());
 			}
 		});
+	}
+
+	private void mostrarDialogoEdicion(ServicioFX servicioFX) {
+		Servicio servicio = servicioFX.getServicio();
+
+		Dialog<Pair<String, String>> dialog = new Dialog<>();
+		dialog.setTitle("Editar Servicio");
+		dialog.setHeaderText("Editar nombre y precio del servicio");
+
+		// Botones
+		ButtonType botonGuardar = new ButtonType("Guardar", ButtonBar.ButtonData.OK_DONE);
+		ButtonType botonEliminar = new ButtonType("Eliminar", ButtonBar.ButtonData.LEFT);
+		dialog.getDialogPane().getButtonTypes().addAll(botonGuardar, botonEliminar, ButtonType.CANCEL);
+
+		// Formulario con dos campos
+		GridPane grid = new GridPane();
+		grid.setHgap(10);
+		grid.setVgap(10);
+
+		TextField nombreField = new TextField(servicio.getNombreServicio());
+		TextField precioField = new TextField(String.valueOf(servicio.getPrecio()));
+
+		grid.add(new Label("Nombre:"), 0, 0);
+		grid.add(nombreField, 1, 0);
+		grid.add(new Label("Precio:"), 0, 1);
+		grid.add(precioField, 1, 1);
+
+		dialog.getDialogPane().setContent(grid);
+
+		// Obtener referencia al botón eliminar para manejar su acción
+		Button botonEliminarControl = (Button) dialog.getDialogPane().lookupButton(botonEliminar);
+		botonEliminarControl.addEventFilter(ActionEvent.ACTION, event -> {
+			// Confirmar antes de eliminar
+			Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
+			confirmacion.setTitle("Confirmar eliminación");
+			confirmacion.setHeaderText("¿Estás seguro de que quieres eliminar este servicio?");
+			confirmacion.setContentText(servicio.getNombreServicio());
+
+			Optional<ButtonType> respuesta = confirmacion.showAndWait();
+			if (respuesta.isPresent() && respuesta.get() == ButtonType.OK) {
+				eliminarServicio(servicio); // Método para eliminar en BD
+				tablaServicios.getItems().remove(servicioFX); // Quitar de la tabla
+				tablaServicios.refresh();
+				dialog.close(); // Cerrar diálogo tras eliminar
+			}
+			event.consume(); // Evitar que el diálogo siga su flujo normal tras eliminar
+		});
+
+		dialog.setResultConverter(dialogButton -> {
+			if (dialogButton == botonGuardar) {
+				return new Pair<>(nombreField.getText(), precioField.getText());
+			}
+			return null;
+		});
+
+		Optional<Pair<String, String>> resultado = dialog.showAndWait();
+
+		resultado.ifPresent(nombrePrecio -> {
+			String nuevoNombre = nombrePrecio.getKey().trim();
+			String nuevoPrecioStr = nombrePrecio.getValue().trim();
+
+			if (!nuevoNombre.isEmpty() && !nuevoPrecioStr.isEmpty()) {
+				try {
+					double nuevoPrecio = Double.parseDouble(nuevoPrecioStr);
+
+					servicio.setNombreServicio(nuevoNombre);
+					servicio.setPrecio(nuevoPrecio);
+
+					actualizarServicio(servicio);
+
+					tablaServicios.refresh();
+
+				} catch (NumberFormatException e) {
+					Alert alert = new Alert(Alert.AlertType.ERROR);
+					alert.setTitle("Error");
+					alert.setHeaderText("Precio inválido");
+					alert.setContentText("Por favor, introduce un número válido para el precio.");
+					alert.showAndWait();
+				}
+			}
+		});
+	}
+
+	private void actualizarServicio(Servicio servicioUpdate) {
+		db4oService.actualizarServicio(servicioUpdate);
+	}
+
+	private void eliminarServicio(Servicio servicio) {
+		db4oService.eliminarServicio(servicio);
 	}
 
 	private void cargarServicios() {
@@ -302,20 +422,30 @@ public class adminController implements Initializable {
 	private void registrarServicio(ActionEvent event) throws IOException {
 		// falta añadir el servicio a una parada
 		String nombreServicio = getNombreServicio();
-		Long id = getIdServicio();
+//		Long id = getIdServicio();
 		Double precio = getPrecioServicio();
-		if (nombreServicio == null || nombreServicio.isBlank() || id == null || precio == null) {
+		if (nombreServicio == null || nombreServicio.isBlank() || precio == null) {
 			alertaError("Datos inválidos", "Debes completar correctamente todos los campos del servicio.");
 			return;
 		}
+		
+		Long idNuevo= db4oService.getNuevoId();
 
-		Servicio nuevoServicio = new Servicio(id, nombreServicio, precio);
+		Servicio nuevoServicio = new Servicio(idNuevo, nombreServicio, precio);
 		db4oService.guardarServicio(nuevoServicio);
 
 		// Añadir como ServicioFX para mostrar en la tabla
 		serviciosList.add(new ServicioFX(nuevoServicio));
 
 //		serviciosList.add(nuevoServicio);
+
+		limpiarCamposServicio();
+	}
+
+	private void limpiarCamposServicio() {
+		idServicio.clear();
+		nombreServicio.clear();
+		precioServicio.clear();
 	}
 
 	@FXML

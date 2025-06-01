@@ -22,12 +22,25 @@ public class ServicioFX {
         return servicio.getIdServicio();
     }
 	
+	public void setPrecio(Long idServicio) {
+		this.servicio.setIdServicio(idServicio);
+	}
+	
 	public String getNombreServicio() {
 		return servicio.getNombreServicio();
 	}
 	
+	public void setNombreServicio(String nombreServicio) {
+		this.servicio.setNombreServicio(nombreServicio);
+	}
+
+	
 	public double getPrecio() {
 	    return servicio.getPrecio();
+	}
+	
+	public void setPrecio(double precio) {
+		this.servicio.setPrecio(precio);
 	}
 	
 	public List<Long> getIdParadas() {
@@ -47,6 +60,10 @@ public class ServicioFX {
 	public Servicio getServicio() {
 		return servicio;
 	}
+	
+	
+	
+	
 
 	public SimpleBooleanProperty seleccionadoProperty() {
 		return seleccionado;
