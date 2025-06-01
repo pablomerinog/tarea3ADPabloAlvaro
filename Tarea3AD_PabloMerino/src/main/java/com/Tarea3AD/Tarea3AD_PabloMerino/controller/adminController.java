@@ -123,7 +123,6 @@ public class adminController implements Initializable {
 	@Autowired
 	private StageManager stageManager;
 
-	
 	private ContadorID contador;
 
 	private ObservableList<ServicioFX> serviciosList = FXCollections.observableArrayList();
@@ -188,12 +187,10 @@ public class adminController implements Initializable {
 		dialog.setTitle("Editar Servicio");
 		dialog.setHeaderText("Editar nombre y precio del servicio");
 
-		// Botones
 		ButtonType botonGuardar = new ButtonType("Guardar", ButtonBar.ButtonData.OK_DONE);
 		ButtonType botonEliminar = new ButtonType("Eliminar", ButtonBar.ButtonData.LEFT);
 		dialog.getDialogPane().getButtonTypes().addAll(botonGuardar, botonEliminar, ButtonType.CANCEL);
 
-		// Formulario con dos campos
 		GridPane grid = new GridPane();
 		grid.setHgap(10);
 		grid.setVgap(10);
@@ -208,10 +205,9 @@ public class adminController implements Initializable {
 
 		dialog.getDialogPane().setContent(grid);
 
-		// Obtener referencia al botón eliminar para manejar su acción
 		Button botonEliminarControl = (Button) dialog.getDialogPane().lookupButton(botonEliminar);
 		botonEliminarControl.addEventFilter(ActionEvent.ACTION, event -> {
-			// Confirmar antes de eliminar
+
 			Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
 			confirmacion.setTitle("Confirmar eliminación");
 			confirmacion.setHeaderText("¿Estás seguro de que quieres eliminar este servicio?");
@@ -219,12 +215,12 @@ public class adminController implements Initializable {
 
 			Optional<ButtonType> respuesta = confirmacion.showAndWait();
 			if (respuesta.isPresent() && respuesta.get() == ButtonType.OK) {
-				eliminarServicio(servicio); // Método para eliminar en BD
-				tablaServicios.getItems().remove(servicioFX); // Quitar de la tabla
+				eliminarServicio(servicio);
+				tablaServicios.getItems().remove(servicioFX);
 				tablaServicios.refresh();
-				dialog.close(); // Cerrar diálogo tras eliminar
+				dialog.close();
 			}
-			event.consume(); // Evitar que el diálogo siga su flujo normal tras eliminar
+			event.consume();
 		});
 
 		dialog.setResultConverter(dialogButton -> {
@@ -428,8 +424,8 @@ public class adminController implements Initializable {
 			alertaError("Datos inválidos", "Debes completar correctamente todos los campos del servicio.");
 			return;
 		}
-		
-		Long idNuevo= db4oService.getNuevoId();
+
+		Long idNuevo = db4oService.getNuevoId();
 
 		Servicio nuevoServicio = new Servicio(idNuevo, nombreServicio, precio);
 		db4oService.guardarServicio(nuevoServicio);
