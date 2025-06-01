@@ -1,7 +1,10 @@
 package com.Tarea3AD.Tarea3AD_PabloMerino.modelo;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
+import javafx.beans.property.SimpleBooleanProperty;
 
 public class Servicio {
 	private Long idServicio;
@@ -9,6 +12,10 @@ public class Servicio {
 	private double precio;
 	List<Long> idParadas = new ArrayList<>();
 	List<Long> ConjuntoContratado = new ArrayList<>();
+
+//	  private final SimpleBooleanProperty seleccionado = new SimpleBooleanProperty(false);
+
+	private transient boolean seleccionado = false;
 
 	public Servicio(Long idServicio, String nombreServicio, double precio) {
 		super();
@@ -27,8 +34,6 @@ public class Servicio {
 		ConjuntoContratado = conjuntoContratado;
 	}
 
-	
-	
 	public Servicio(Long idServicio, String nombreServicio, double precio, List<Long> idParadas) {
 		super();
 		this.idServicio = idServicio;
@@ -66,7 +71,10 @@ public class Servicio {
 	}
 
 	public List<Long> getIdParadas() {
-		return idParadas;
+	    if (this.idParadas == null) {
+	        return Collections.emptyList();  // devuelve lista vacía en vez de null
+	    }
+	    return this.idParadas;
 	}
 
 	public void setIdParadas(List<Long> idParadas) {
@@ -79,6 +87,26 @@ public class Servicio {
 
 	public void setConjuntoContratado(List<Long> conjuntoContratado) {
 		ConjuntoContratado = conjuntoContratado;
+	}
+
+//    public boolean isSeleccionado() {
+//        return seleccionado.get();
+//    }
+//
+//    public void setSeleccionado(boolean seleccionado) {
+//        this.seleccionado.set(seleccionado);
+//    }
+//
+//    public SimpleBooleanProperty seleccionadoProperty() {
+//        return seleccionado;
+//    }
+
+	public boolean isSeleccionado() {
+		return seleccionado;
+	}
+
+	public void setSeleccionado(boolean seleccionado) {
+		this.seleccionado = seleccionado;
 	}
 
 	@Override

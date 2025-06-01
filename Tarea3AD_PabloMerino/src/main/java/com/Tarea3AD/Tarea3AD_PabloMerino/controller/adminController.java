@@ -2,6 +2,8 @@ package com.Tarea3AD.Tarea3AD_PabloMerino.controller;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,12 +11,11 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 
 import com.Tarea3AD.Tarea3AD_PabloMerino.config.StageManager;
-import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.ConjuntoContratado;
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Parada;
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Servicio;
+import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.ServicioFX;
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Usuario;
 import com.Tarea3AD.Tarea3AD_PabloMerino.services.ParadaService;
-
 import com.Tarea3AD.Tarea3AD_PabloMerino.services.UserService;
 import com.Tarea3AD.Tarea3AD_PabloMerino.services.db4oService;
 import com.Tarea3AD.Tarea3AD_PabloMerino.vistas.FxmlView;
@@ -26,9 +27,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 @Controller
@@ -42,6 +46,9 @@ public class adminController implements Initializable {
 
 	@FXML
 	private Button btnAñadir;
+
+	@FXML
+	private Button btnAsignarServicios;
 
 	@FXML
 	private Button cancelarServicio;
@@ -74,19 +81,25 @@ public class adminController implements Initializable {
 	private TextField idServicio;
 
 	@FXML
-	private TableView<Servicio> tablaServicios;
+	private TableView<ServicioFX> tablaServicios;
 
 	@FXML
-	private TableColumn<Servicio, Long> colId;
+	private TableColumn<ServicioFX, Long> colId;
 
 	@FXML
-	private TableColumn<Servicio, String> colNombre;
+	private TableColumn<ServicioFX, String> colNombre;
 
 	@FXML
-	private TableColumn<Servicio, Double> colPrecio;
+	private TableColumn<ServicioFX, Double> colPrecio;
 
 	@FXML
-	private TableColumn<Parada, Void> colEditar;
+	private TableColumn<ServicioFX, Void> colEditar;
+
+	@FXML
+	private TableColumn<ServicioFX, Boolean> colSeleccionar;
+
+	@FXML
+	private ComboBox<Parada> comboParadas;
 
 	@Autowired
 	private UserService userService;
@@ -101,23 +114,54 @@ public class adminController implements Initializable {
 	@Autowired
 	private StageManager stageManager;
 
-	private ObservableList<Servicio> serviciosList = FXCollections.observableArrayList();
+	private ObservableList<ServicioFX> serviciosList = FXCollections.observableArrayList();
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		colId.setCellValueFactory(new PropertyValueFactory<>("idServicio"));
 		colNombre.setCellValueFactory(new PropertyValueFactory<>("nombreServicio"));
 		colPrecio.setCellValueFactory(new PropertyValueFactory<>("precio"));
+		colSeleccionar.setCellValueFactory(cellData -> cellData.getValue().seleccionadoProperty());
+		colSeleccionar.setCellFactory(CheckBoxTableCell.forTableColumn(colSeleccionar));
 
 		cargarServicios();
+		cargarParadas();
+		tablaServicios.setEditable(true);
+		colSeleccionar.setEditable(true);
+	}
+
+	private void cargarParadas() {
+		List<Parada> paradas = paradaService.findAll();
+		comboParadas.setItems(FXCollections.observableArrayList(paradas));
+
+		comboParadas.setCellFactory(lv -> new ListCell<>() {
+			@Override
+			protected void updateItem(Parada item, boolean empty) {
+				super.updateItem(item, empty);
+				setText(empty || item == null ? null : item.getNombre());
+			}
+		});
+		comboParadas.setButtonCell(new ListCell<>() {
+			@Override
+			protected void updateItem(Parada item, boolean empty) {
+				super.updateItem(item, empty);
+				setText(empty || item == null ? null : item.getNombre());
+			}
+		});
 	}
 
 	private void cargarServicios() {
+		List<Servicio> listaServicios = db4oService.listarServicios();
+
 		serviciosList.clear();
 
-		serviciosList.addAll(db4oService.listarServicios());
+		// Convierte cada Servicio en ServicioFX
+		for (Servicio s : listaServicios) {
+			serviciosList.add(new ServicioFX(s));
+		}
 
 		tablaServicios.setItems(serviciosList);
+
 	}
 
 	public void alertaInfo(String title, String message) {
@@ -256,15 +300,75 @@ public class adminController implements Initializable {
 
 	@FXML
 	private void registrarServicio(ActionEvent event) throws IOException {
-//falta añadir el servicio a una parada
+		// falta añadir el servicio a una parada
 		String nombreServicio = getNombreServicio();
 		Long id = getIdServicio();
 		Double precio = getPrecioServicio();
+		if (nombreServicio == null || nombreServicio.isBlank() || id == null || precio == null) {
+			alertaError("Datos inválidos", "Debes completar correctamente todos los campos del servicio.");
+			return;
+		}
 
 		Servicio nuevoServicio = new Servicio(id, nombreServicio, precio);
 		db4oService.guardarServicio(nuevoServicio);
-		
-		serviciosList.add(nuevoServicio);
-		
+
+		// Añadir como ServicioFX para mostrar en la tabla
+		serviciosList.add(new ServicioFX(nuevoServicio));
+
+//		serviciosList.add(nuevoServicio);
 	}
+
+	@FXML
+	private void asignarServicios(ActionEvent event) {
+		Parada paradaSeleccionada = comboParadas.getValue();
+		if (paradaSeleccionada == null) {
+			alertaError("Error", "Debes seleccionar una parada.");
+			return;
+		}
+
+		ObservableList<Servicio> seleccionados = FXCollections.observableArrayList();
+		for (ServicioFX servicioFX : serviciosList) { // Cambiado a ServicioFX
+			if (servicioFX.isSeleccionado()) {
+				seleccionados.add(servicioFX.getServicio()); // obtener Servicio original
+			}
+		}
+
+		boolean seleccionado = false;
+
+		for (ServicioFX servicioFX : tablaServicios.getItems()) {
+			Servicio servicio = servicioFX.getServicio();
+			if (servicioFX.isSeleccionado()) {
+				if (!servicio.getIdParadas().contains(paradaSeleccionada.getId())) {
+					List<Long> paradas = new ArrayList<>(servicio.getIdParadas());
+					paradas.add(paradaSeleccionada.getId());
+					servicio.setIdParadas(paradas);
+				}
+
+				System.out.println("Servicio asignado:");
+				System.out.println("ID: " + servicio.getIdServicio());
+				System.out.println("Nombre: " + servicio.getNombreServicio());
+				System.out.println("Paradas asignadas: " + servicio.getIdParadas());
+				seleccionado = true;
+			}
+		}
+
+		alertaInfo("Perfecto!", "Servicios asignados correctamente a la parada: " + paradaSeleccionada.getNombre());
+
+		for (ServicioFX servicioFX : tablaServicios.getItems()) {
+			servicioFX.setSeleccionado(false);
+		}
+
+		tablaServicios.refresh();
+	}
+
+	public ObservableList<Servicio> getServiciosSeleccionados() {
+		ObservableList<Servicio> seleccionados = FXCollections.observableArrayList();
+		for (ServicioFX servicioFX : serviciosList) { // Cambiado a ServicioFX
+			if (servicioFX.isSeleccionado()) {
+				seleccionados.add(servicioFX.getServicio()); // obtener Servicio original
+			}
+		}
+		return seleccionados;
+	}
+
 }
