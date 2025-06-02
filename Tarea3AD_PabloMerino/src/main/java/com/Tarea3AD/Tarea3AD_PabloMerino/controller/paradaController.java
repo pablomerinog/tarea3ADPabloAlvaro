@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -42,6 +43,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -110,8 +113,12 @@ public class paradaController implements Initializable {
 	@FXML
 	private ComboBox<String> cmbxPeregrinos;
 
+//	@FXML
+//	private ComboBox<String> cmbxServicios;
+
 	@FXML
-	private ComboBox<String> cmbxServicios;
+	private ListView<String> listaServicios;
+	
 	
 	@Autowired
 	private UserService userService;
@@ -129,7 +136,7 @@ public class paradaController implements Initializable {
 	@Lazy
 	@Autowired
 	private StageManager stageManager;
-	
+
 	@Autowired
 	private db4oService db4oService;
 
@@ -151,13 +158,13 @@ public class paradaController implements Initializable {
 		cargarServicios();
 
 		checkVIP.setDisable(true);
-		cmbxServicios.setDisable(true);
+		listaServicios.setDisable(true);
 		checkAlojar.selectedProperty().addListener((obs, wasSelected, isNowSelected) -> {
 			checkVIP.setDisable(!isNowSelected);
-			cmbxServicios.setDisable(!isNowSelected);
+			listaServicios.setDisable(!isNowSelected);
 			if (!isNowSelected) {
 				checkVIP.setSelected(false);
-				cmbxServicios.getSelectionModel().clearSelection();
+				listaServicios.getSelectionModel().clearSelection();
 			}
 		});
 	}
@@ -300,7 +307,7 @@ public class paradaController implements Initializable {
 				Files.createDirectories(carpeta);
 			}
 
-			String nombreArchivo = "export_parada_" + parada.getNombre()+" "+parada.getRegion() + ".txt";
+			String nombreArchivo = "export_parada_" + parada.getNombre() + " " + parada.getRegion() + ".txt";
 			Path rutaArchivo = carpeta.resolve(nombreArchivo);
 
 			Files.writeString(rutaArchivo, contenido.toString());
@@ -313,16 +320,36 @@ public class paradaController implements Initializable {
 		}
 	}
 
+//	public void cargarServicios() {
+//		Usuario usuario = sesion.getUsuIniciado();
+//
+//		Parada parada = paradasService.findByIdUsuario(usuario.getId());
+//
+//		List<Servicio> serviciosParada = db4oService.listarServicios().stream()
+//				.filter(servicio -> servicio.getIdParadas().contains(parada.getId())).collect(Collectors.toList());
+//		List<String> nombresServicios = new ArrayList<>();
+//		for (Servicio s : serviciosParada) {
+//			nombresServicios.add(s.getNombreServicio());
+//		}
+//		cmbxServicios.setItems(FXCollections.observableArrayList(nombresServicios));
+//	}
+
 	public void cargarServicios() {
 		Usuario usuario = sesion.getUsuIniciado();
-
 		Parada parada = paradasService.findByIdUsuario(usuario.getId());
-		
-		List<Servicio> servicios = db4oService.listarServiciosPorIdParada(parada.getId()); // o el nombre de la parada seleccionada
-		for (Servicio servicio : servicios) {
-			cmbxServicios.getItems().add(servicio.getNombreServicio());
-		}
-		
+
+		List<Servicio> serviciosParada = db4oService.listarServicios().stream()
+				.filter(servicio -> servicio.getIdParadas().contains(parada.getId())).collect(Collectors.toList());
+
+		List<String> nombresServicios = serviciosParada.stream().map(Servicio::getNombreServicio)
+				.collect(Collectors.toList());
+
+		ObservableList<String> items = FXCollections.observableArrayList(nombresServicios);
+
+		listaServicios.setItems(items); // listViewServicios es un ListView<String>
+
+		// Configura para permitir selección múltiple
+		listaServicios.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 	}
-	
+
 }

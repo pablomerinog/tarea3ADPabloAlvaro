@@ -3,7 +3,9 @@ package com.Tarea3AD.Tarea3AD_PabloMerino.controller;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -21,6 +23,7 @@ import com.Tarea3AD.Tarea3AD_PabloMerino.services.UserService;
 import com.Tarea3AD.Tarea3AD_PabloMerino.services.db4oService;
 import com.Tarea3AD.Tarea3AD_PabloMerino.utils.copy.ContadorID;
 import com.Tarea3AD.Tarea3AD_PabloMerino.vistas.FxmlView;
+import com.mysql.cj.conf.BooleanProperty;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -35,6 +38,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -416,9 +420,9 @@ public class adminController implements Initializable {
 
 	@FXML
 	private void registrarServicio(ActionEvent event) throws IOException {
-		// falta añadir el servicio a una parada
+
 		String nombreServicio = getNombreServicio();
-//		Long id = getIdServicio();
+
 		Double precio = getPrecioServicio();
 		if (nombreServicio == null || nombreServicio.isBlank() || precio == null) {
 			alertaError("Datos inválidos", "Debes completar correctamente todos los campos del servicio.");
@@ -430,10 +434,7 @@ public class adminController implements Initializable {
 		Servicio nuevoServicio = new Servicio(idNuevo, nombreServicio, precio);
 		db4oService.guardarServicio(nuevoServicio);
 
-		// Añadir como ServicioFX para mostrar en la tabla
 		serviciosList.add(new ServicioFX(nuevoServicio));
-
-//		serviciosList.add(nuevoServicio);
 
 		limpiarCamposServicio();
 	}
@@ -469,6 +470,8 @@ public class adminController implements Initializable {
 					paradas.add(paradaSeleccionada.getId());
 					servicio.setIdParadas(paradas);
 				}
+
+				db4oService.guardarServicio(servicio);
 
 				System.out.println("Servicio asignado:");
 				System.out.println("ID: " + servicio.getIdServicio());
