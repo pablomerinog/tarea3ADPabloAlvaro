@@ -13,7 +13,7 @@ public class ServicioFX {
 		this.servicio = servicio;
 		this.seleccionado = new SimpleBooleanProperty(servicio.isSeleccionado());
 
-		// Sincroniza cambios del checkbox al modelo real
+		
 		seleccionado.addListener((obs, oldVal, newVal) -> servicio.setSeleccionado(newVal));
 	}
 	

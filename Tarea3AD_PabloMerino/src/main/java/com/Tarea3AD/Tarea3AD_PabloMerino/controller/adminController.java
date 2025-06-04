@@ -410,6 +410,7 @@ public class adminController implements Initializable {
 		String nombreServicio = getNombreServicio();
 
 		Double precio = getPrecioServicio();
+		
 		if (nombreServicio == null || nombreServicio.isBlank() || precio == null) {
 			alertaError("Datos inválidos", "Debes completar correctamente todos los campos del servicio.");
 			return;

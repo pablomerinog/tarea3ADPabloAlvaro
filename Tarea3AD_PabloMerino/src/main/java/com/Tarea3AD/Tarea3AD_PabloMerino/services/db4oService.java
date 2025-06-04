@@ -33,7 +33,7 @@ public class db4oService {
 	    ContadorID contador = contadorRepo.findByPredicate(new Predicate<ContadorID>() {
 	        @Override
 	        public boolean match(ContadorID c) {
-	            return true; // Solo queremos el primero, da igual cuál
+	            return true; 
 	        }
 	    });
 
@@ -80,8 +80,8 @@ public class db4oService {
 	public Servicio buscarServicioPorId(Long id) {
 		return servicioRepo.findByPredicate(new Predicate<Servicio>() {
 			@Override
-			public boolean match(Servicio c) {
-				return c.getIdServicio().equals(id);
+			public boolean match(Servicio s) {
+				return s.getIdServicio().equals(id);
 			}
 		});
 

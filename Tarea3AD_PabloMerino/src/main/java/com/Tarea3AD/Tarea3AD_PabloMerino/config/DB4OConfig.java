@@ -30,6 +30,5 @@ public class DB4OConfig {
 			return new Db4oRepository<>(db4oContainer, ConjuntoContratado.class);
 		}
 		
-		
 	}
 }
