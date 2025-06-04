@@ -8,7 +8,6 @@ import jakarta.persistence.*;
 @Embeddable
 public class Direccion {
 
-
 	private String direccion;
 	private String localidad;
 
@@ -22,7 +21,6 @@ public class Direccion {
 		this.localidad = localidad;
 	}
 
-	
 	public String getDireccion() {
 		return direccion;
 	}
