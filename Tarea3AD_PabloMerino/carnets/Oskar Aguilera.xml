@@ -1,1 +1,76 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><?xml-stylesheet type="text/xml" href="test.xsl"?><carnet><id>3</id><fechaexp>30/05/2025</fechaexp><expedidoen>Ciudad Real</expedidoen><peregrino><nombre>Oskar Aguilera</nombre><nacionalidad>Arabia Saudí</nacionalidad></peregrino><hoy>30/05/2025</hoy><distanciatotal>40,0</distanciatotal><paradas><parada><orden>1</orden><nombre>Toledo</nombre><region>T</region></parada><parada><orden>2</orden><nombre>Ciudad Real</nombre><region>O</region></parada><parada><orden>3</orden><nombre>Ciudad Real</nombre><region>C</region></parada><parada><orden>4</orden><nombre>Oviedo</nombre><region>O</region></parada><parada><orden>5</orden><nombre>Gijon</nombre><region>G</region></parada></paradas><estancias><estancia><id>3</id><fecha>30/05/2025</fecha><parada>Gijon</parada><vip>true</vip></estancia><estancia><id>4</id><fecha>30/05/2025</fecha><parada>Oviedo</parada><vip>false</vip></estancia><estancia><id>5</id><fecha>30/05/2025</fecha><parada>Ciudad Real</parada><vip>true</vip></estancia></estancias></carnet>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><?xml-stylesheet type="text/xml" href="test.xsl"?>
+<carnet>
+	<id>2</id>
+	<fechaexp>04/06/2025</fechaexp>
+	<expedidoen>Ciudad Real</expedidoen>
+	<peregrino>
+		<nombre>Oskar Aguilera</nombre>
+		<nacionalidad>Croacia</nacionalidad>
+	</peregrino>
+	<hoy>04/06/2025</hoy>
+	<distanciatotal>50,0</distanciatotal>
+	<paradas>
+		<parada>
+			<orden>1</orden>
+			<nombre>Gijon</nombre>
+			<region>g</region>
+		</parada>
+		<parada>
+			<orden>2</orden>
+			<nombre>Toledo</nombre>
+			<region>T</region>
+		</parada>
+		<parada>
+			<orden>3</orden>
+			<nombre>Madrid</nombre>
+			<region>M</region>
+		</parada>
+		<parada>
+			<orden>4</orden>
+			<nombre>Logroño</nombre>
+			<region>L</region>
+		</parada>
+		<parada>
+			<orden>5</orden>
+			<nombre>Oviedo</nombre>
+			<region>O</region>
+		</parada>
+		<parada>
+			<orden>6</orden>
+			<nombre>Ciudad Real</nombre>
+			<region>C</region>
+		</parada>
+	</paradas>
+	<estancias>
+		<estancia>
+			<id>3</id>
+			<fecha>04/06/2025</fecha>
+			<parada>Madrid</parada>
+			<vip>true</vip>
+		</estancia>
+		<estancia>
+			<id>4</id>
+			<fecha>04/06/2025</fecha>
+			<parada>Toledo</parada>
+			<vip>true</vip>
+		</estancia>
+		<estancia>
+			<id>5</id>
+			<fecha>04/06/2025</fecha>
+			<parada>Gijon</parada>
+			<vip>true</vip>
+		</estancia>
+		<estancia>
+			<id>6</id>
+			<fecha>04/06/2025</fecha>
+			<parada>Oviedo</parada>
+			<vip>false</vip>
+		</estancia>
+		<estancia>
+			<id>7</id>
+			<fecha>04/06/2025</fecha>
+			<parada>Logroño</parada>
+			<vip>false</vip>
+		</estancia>
+	</estancias>
+</carnet>
