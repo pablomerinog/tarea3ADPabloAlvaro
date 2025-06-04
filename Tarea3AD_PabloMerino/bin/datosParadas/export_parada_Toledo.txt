@@ -1,0 +1,10 @@
+Datos de la Parada
+ID: 1
+Nombre: Toledo
+Región: T
+
+Rango de fechas: 2025-05-14 a 2025-05-31
+
+Estancias:
+ID Estancia, Nombre Peregrino, Fecha, VIP
+1, Pablo Merino, 2025-05-29, Sí
