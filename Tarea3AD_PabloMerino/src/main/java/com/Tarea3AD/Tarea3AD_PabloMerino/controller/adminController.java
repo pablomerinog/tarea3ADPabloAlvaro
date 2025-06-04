@@ -125,8 +125,6 @@ public class adminController implements Initializable {
 
 	@FXML
 	private TableColumn<ParadaFX, Boolean> colCheck;
-//	@FXML
-//	private ComboBox<Parada> comboParadas;
 
 	@Autowired
 	private UserService userService;
@@ -204,15 +202,41 @@ public class adminController implements Initializable {
 	}
 
 	private void cargarParadas() {
-	    List<Parada> paradas = paradaService.findAll();
+		List<Parada> paradas = paradaService.findAll();
+		paradasList.clear();
 
-	    paradasList.clear();
+		for (Parada p : paradas) {
+			ParadaFX paradaFX = new ParadaFX(p);
 
-	    for (Parada p : paradas) {
-	        paradasList.add(new ParadaFX(p)); 
-	    }
+			paradaFX.seleccionadoProperty().addListener((obs, wasSelected, isNowSelected) -> {
+				actualizarServiciosSegunParadasSeleccionadas();
+			});
 
-	    tablaParadas.setItems(paradasList);
+			paradasList.add(paradaFX);
+		}
+
+		tablaParadas.setItems(paradasList);
+	}
+
+	private List<Parada> getParadasSeleccionadas() {
+		return paradasList.stream().filter(ParadaFX::isSeleccionado).map(ParadaFX::getParada)
+				.collect(Collectors.toList());
+	}
+
+	private void actualizarServiciosSegunParadasSeleccionadas() {
+		List<Long> idsParadasSeleccionadas = getParadasSeleccionadas().stream().map(Parada::getId)
+				.collect(Collectors.toList());
+
+		for (ServicioFX servicioFX : serviciosList) {
+			Servicio servicio = servicioFX.getServicio();
+			List<Long> idsParadasDelServicio = servicio.getIdParadas();
+
+			boolean tieneAlguna = idsParadasDelServicio.stream().anyMatch(idsParadasSeleccionadas::contains);
+
+			servicioFX.setSeleccionado(tieneAlguna);
+		}
+
+		tablaServicios.refresh();
 	}
 
 	private void editarServicio(ServicioFX servicioFX) {
@@ -433,7 +457,7 @@ public class adminController implements Initializable {
 		alertaInfo("Registro correcto", "La parada se ha registrado con éxito.");
 
 		paradasList.add(new ParadaFX(nuevaParada));
-		
+
 		tablaParadas.refresh();
 	}
 
@@ -466,55 +490,55 @@ public class adminController implements Initializable {
 
 	@FXML
 	private void asignarServicios(ActionEvent event) {
-
 		List<Servicio> serviciosSeleccionados = obtenerServiciosSeleccionados();
-		List<Parada> paradasSeleccionadas = obtenerParadasSeleccionadas(); 
-		
-		
-		if (serviciosSeleccionados.isEmpty() || paradasSeleccionadas.isEmpty()) {
-			alertaError("Selección incompleta", "Debes seleccionar al menos un servicio y una parada.");
+		List<Parada> paradasSeleccionadas = obtenerParadasSeleccionadas();
+
+		if (paradasSeleccionadas.isEmpty()) {
+			alertaError("Selección incompleta", "Debes seleccionar al menos una parada.");
 			return;
 		}
 
-		boolean asignacionRealizada = false;
+		// Primero procesamos todas las paradas seleccionadas
+		for (Parada parada : paradasSeleccionadas) {
+			Long idParada = parada.getId();
 
-		for (Servicio servicio : serviciosSeleccionados) {
+			// Obtenemos los servicios actualmente asociados a esta parada
+			List<Servicio> serviciosActuales = db4oService.listarServiciosPorIdParada(idParada);
 
-			List<Long> idParadas = servicio.getIdParadas();
-			if (idParadas == null) {
-				idParadas = new ArrayList<>();
-				servicio.setIdParadas(idParadas);
-			}
+			// Servicios que deben estar asociados (los seleccionados)
+			List<Servicio> serviciosDeseados = serviciosSeleccionados;
 
-			for (Parada parada : paradasSeleccionadas) {
-				if (!idParadas.contains(parada.getId())) {
-					idParadas.add(parada.getId());
+			// 1. Eliminar asociaciones que ya no deben estar
+			for (Servicio servicioExistente : serviciosActuales) {
+				if (!serviciosDeseados.contains(servicioExistente)) {
+					servicioExistente.getIdParadas().remove(idParada);
+					db4oService.actualizarServicio(servicioExistente);
 				}
 			}
 
-			db4oService.guardarServicio(servicio);
+			// 2. Añadir nuevas asociaciones
+			for (Servicio servicioDeseado : serviciosDeseados) {
+				// Inicializar lista si es null
+				if (servicioDeseado.getIdParadas() == null) {
+					servicioDeseado.setIdParadas(new ArrayList<>());
+				}
 
-			System.out.println("Servicio asignado:");
-			System.out.println("ID: " + servicio.getIdServicio());
-			System.out.println("Nombre: " + servicio.getNombreServicio());
-			System.out.println("Paradas asignadas: " + servicio.getIdParadas());
-
-			asignacionRealizada = true;
+				// Si no está ya asociado, lo añadimos
+				if (!servicioDeseado.getIdParadas().contains(idParada)) {
+					servicioDeseado.getIdParadas().add(idParada);
+					db4oService.actualizarServicio(servicioDeseado);
+				}
+			}
 		}
 
-		if (asignacionRealizada) {
-			alertaInfo("Asignación correcta", "Los servicios han sido asignados a las paradas seleccionadas.");
+		alertaInfo("Asignación actualizada", "Las asociaciones se han actualizado correctamente.");
 
-			
-			for (ServicioFX servicioFX : tablaServicios.getItems()) {
-				servicioFX.setSeleccionado(false);
-			}
-			for (ParadaFX paradaFX : tablaParadas.getItems()) {
-				paradaFX.setSeleccionado(false);
-			}
-			tablaServicios.refresh();
-			tablaParadas.refresh();
-		}
+		// Limpiar selecciones
+		serviciosList.forEach(servicioFX -> servicioFX.setSeleccionado(false));
+		paradasList.forEach(paradaFX -> paradaFX.setSeleccionado(false));
+		tablaServicios.refresh();
+		tablaParadas.refresh();
+		
 	}
 
 	private List<Servicio> obtenerServiciosSeleccionados() {
@@ -528,13 +552,13 @@ public class adminController implements Initializable {
 	}
 
 	private List<Parada> obtenerParadasSeleccionadas() {
-	    List<Parada> seleccionadas = new ArrayList<>();
-	    for (ParadaFX parada : paradasList) {
-	        if (parada.isSeleccionado()) {
-	            seleccionadas.add(parada.getParada());
-	        }
-	    }
-	    return seleccionadas;
+		List<Parada> seleccionadas = new ArrayList<>();
+		for (ParadaFX parada : paradasList) {
+			if (parada.isSeleccionado()) {
+				seleccionadas.add(parada.getParada());
+			}
+		}
+		return seleccionadas;
 	}
 
 	public ObservableList<Servicio> getServiciosSeleccionados() {

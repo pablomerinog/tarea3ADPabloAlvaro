@@ -92,6 +92,12 @@ public class db4oService {
 				.filter(servicio -> servicio.getIdParadas() != null && servicio.getIdParadas().contains(idParada))
 				.toList();
 	}
+	
+	public List<Servicio> obtenerServiciosDeParada(Long idParada) {
+	    return servicioRepo.findAll().stream()
+	            .filter(servicio -> servicio.getIdParadas() != null && servicio.getIdParadas().contains(idParada))
+	            .toList();
+	}
 
 	public void actualizarServicio(Servicio servicioActualizado) {
 		servicioRepo.update(servicioActualizado, new Predicate<Servicio>() {
