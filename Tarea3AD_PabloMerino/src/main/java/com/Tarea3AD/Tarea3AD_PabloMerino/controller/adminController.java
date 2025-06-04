@@ -3,9 +3,7 @@ package com.Tarea3AD.Tarea3AD_PabloMerino.controller;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -14,6 +12,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 
 import com.Tarea3AD.Tarea3AD_PabloMerino.config.StageManager;
+import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.ConjuntoContratado;
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Parada;
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Servicio;
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.ServicioFX;
@@ -23,7 +22,10 @@ import com.Tarea3AD.Tarea3AD_PabloMerino.services.UserService;
 import com.Tarea3AD.Tarea3AD_PabloMerino.services.db4oService;
 import com.Tarea3AD.Tarea3AD_PabloMerino.utils.copy.ContadorID;
 import com.Tarea3AD.Tarea3AD_PabloMerino.vistas.FxmlView;
-import com.mysql.cj.conf.BooleanProperty;
+import com.db4o.Db4o;
+import com.db4o.Db4oEmbedded;
+import com.db4o.ObjectContainer;
+import com.db4o.ObjectSet;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -38,7 +40,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -91,9 +92,6 @@ public class adminController implements Initializable {
 	private TextField precioServicio;
 
 	@FXML
-	private TextField idServicio;
-
-	@FXML
 	private TableView<ServicioFX> tablaServicios;
 
 	@FXML
@@ -129,6 +127,8 @@ public class adminController implements Initializable {
 
 	private ContadorID contador;
 
+	private static ObjectContainer db;
+
 	private ObservableList<ServicioFX> serviciosList = FXCollections.observableArrayList();
 
 	@Override
@@ -144,7 +144,7 @@ public class adminController implements Initializable {
 			{
 				btn.setOnAction(event -> {
 					ServicioFX servicioFX = getTableView().getItems().get(getIndex());
-					mostrarDialogoEdicion(servicioFX);
+					editarServicio(servicioFX);
 				});
 			}
 
@@ -162,6 +162,7 @@ public class adminController implements Initializable {
 		cargarParadas();
 		tablaServicios.setEditable(true);
 		colSeleccionar.setEditable(true);
+		mostrarDb4o();
 	}
 
 	private void cargarParadas() {
@@ -184,7 +185,7 @@ public class adminController implements Initializable {
 		});
 	}
 
-	private void mostrarDialogoEdicion(ServicioFX servicioFX) {
+	private void editarServicio(ServicioFX servicioFX) {
 		Servicio servicio = servicioFX.getServicio();
 
 		Dialog<Pair<String, String>> dialog = new Dialog<>();
@@ -275,13 +276,11 @@ public class adminController implements Initializable {
 
 		serviciosList.clear();
 
-		// Convierte cada Servicio en ServicioFX
 		for (Servicio s : listaServicios) {
 			serviciosList.add(new ServicioFX(s));
 		}
 
 		tablaServicios.setItems(serviciosList);
-
 	}
 
 	public void alertaInfo(String title, String message) {
@@ -327,19 +326,6 @@ public class adminController implements Initializable {
 
 	public String getNombreUsuario() {
 		return usuarioParada.getText();
-	}
-
-	public Long getIdServicio() {
-		String id = idServicio.getText();
-		if (id != null && !id.isEmpty()) {
-			try {
-				return Long.parseLong(id);
-			} catch (NumberFormatException e) {
-				System.out.println("Error: el ID no es un número válido.");
-				return null;
-			}
-		}
-		return null;
 	}
 
 	public Double getPrecioServicio() {
@@ -440,7 +426,6 @@ public class adminController implements Initializable {
 	}
 
 	private void limpiarCamposServicio() {
-		idServicio.clear();
 		nombreServicio.clear();
 		precioServicio.clear();
 	}
@@ -454,9 +439,9 @@ public class adminController implements Initializable {
 		}
 
 		ObservableList<Servicio> seleccionados = FXCollections.observableArrayList();
-		for (ServicioFX servicioFX : serviciosList) { // Cambiado a ServicioFX
+		for (ServicioFX servicioFX : serviciosList) {
 			if (servicioFX.isSeleccionado()) {
-				seleccionados.add(servicioFX.getServicio()); // obtener Servicio original
+				seleccionados.add(servicioFX.getServicio());
 			}
 		}
 
@@ -492,12 +477,38 @@ public class adminController implements Initializable {
 
 	public ObservableList<Servicio> getServiciosSeleccionados() {
 		ObservableList<Servicio> seleccionados = FXCollections.observableArrayList();
-		for (ServicioFX servicioFX : serviciosList) { // Cambiado a ServicioFX
+		for (ServicioFX servicioFX : serviciosList) {
 			if (servicioFX.isSeleccionado()) {
-				seleccionados.add(servicioFX.getServicio()); // obtener Servicio original
+				seleccionados.add(servicioFX.getServicio());
 			}
 		}
 		return seleccionados;
 	}
 
+	public void mostrarDb4o() {
+		List<Servicio> listaServicios = db4oService.listarServicios();
+
+		List<ConjuntoContratado> listaConjuntos = db4oService.listarConjuntos();
+
+		System.out.println("====== LISTADO DE SERVICIOS ======");
+		for (Servicio s : listaServicios) {
+			System.out.println("Id: " + s.getIdServicio());
+			System.out.println("Nombre: " + s.getNombreServicio());
+			System.out.println("Precio: " + s.getPrecio());
+			System.out.println("Paradas: " + s.getIdParadas());
+			System.out.println("Conjuntos: " + s.getConjuntoContratado());
+			System.out.println("----------------------------------");
+		}
+
+		System.out.println("\n====== LISTADO DE CONJUNTOS CONTRATADOS ======");
+		for (ConjuntoContratado c : listaConjuntos) {
+			System.out.println("ID: " + c.getId());
+			System.out.println("Precio: " + c.getPrecioTotal());
+			System.out.println("Modo de pago: " + c.getModoPago());
+			System.out.println("Extra: " + c.getExtra());
+			System.out.println("Servicios: "+c.getServicios());
+			
+		}
+		System.out.println("----------------------------------");
+	}
 }

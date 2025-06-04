@@ -17,6 +17,7 @@ import org.springframework.stereotype.Controller;
 
 import com.Tarea3AD.Tarea3AD_PabloMerino.config.StageManager;
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Carnet;
+import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.ConjuntoContratado;
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Estancia;
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Parada;
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.PereParada;
@@ -31,7 +32,9 @@ import com.Tarea3AD.Tarea3AD_PabloMerino.services.PereParadaService;
 import com.Tarea3AD.Tarea3AD_PabloMerino.services.PeregrinoService;
 import com.Tarea3AD.Tarea3AD_PabloMerino.services.UserService;
 import com.Tarea3AD.Tarea3AD_PabloMerino.services.db4oService;
+import com.Tarea3AD.Tarea3AD_PabloMerino.utils.copy.ContadorIdConjunto;
 import com.Tarea3AD.Tarea3AD_PabloMerino.vistas.FxmlView;
+import com.db4o.ObjectSet;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -47,6 +50,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 @Controller
@@ -113,13 +117,15 @@ public class paradaController implements Initializable {
 	@FXML
 	private ComboBox<String> cmbxPeregrinos;
 
-//	@FXML
-//	private ComboBox<String> cmbxServicios;
+	@FXML
+	private ComboBox<String> cmbxModoPago;
+
+	@FXML
+	private TextField extra;
 
 	@FXML
 	private ListView<String> listaServicios;
-	
-	
+
 	@Autowired
 	private UserService userService;
 
@@ -159,14 +165,23 @@ public class paradaController implements Initializable {
 
 		checkVIP.setDisable(true);
 		listaServicios.setDisable(true);
+		cmbxModoPago.setDisable(true);
+		extra.setDisable(true);
 		checkAlojar.selectedProperty().addListener((obs, wasSelected, isNowSelected) -> {
 			checkVIP.setDisable(!isNowSelected);
 			listaServicios.setDisable(!isNowSelected);
+			cmbxModoPago.setDisable(!isNowSelected);
+			extra.setDisable(!isNowSelected);
 			if (!isNowSelected) {
 				checkVIP.setSelected(false);
 				listaServicios.getSelectionModel().clearSelection();
+				cmbxModoPago.getSelectionModel().clearSelection();
+				extra.getText();
 			}
 		});
+
+		cmbxModoPago.setItems(FXCollections.observableArrayList("E - Efectivo", "T - Tarjeta", "B - Bizum"));
+		cmbxModoPago.getSelectionModel().selectFirst();
 	}
 
 	public void cargarParadas() {
@@ -252,10 +267,57 @@ public class paradaController implements Initializable {
 			}
 
 			estanciaService.save(estancia);
+
+			ObservableList<String> serviciosSeleccionados = listaServicios.getSelectionModel().getSelectedItems();
+
+			if (!serviciosSeleccionados.isEmpty()) {
+				ConjuntoContratado conjunto = new ConjuntoContratado();
+
+				List<Servicio> serviciosContratados = db4oService.listarServicios().stream()
+						.filter(s -> serviciosSeleccionados.contains(s.getNombreServicio()))
+						.collect(Collectors.toList());
+
+				List<Long> idsServicios = serviciosContratados.stream().map(Servicio::getIdServicio)
+						.collect(Collectors.toList());
+
+				conjunto.setServicios(idsServicios);
+
+				char modoPago = cmbxModoPago.getValue().charAt(0);
+				conjunto.setModoPago(modoPago);
+
+				String infoExtra = extra.getText();
+				if (infoExtra != null && !infoExtra.isBlank()) {
+					conjunto.setExtra(infoExtra);
+				}
+
+				double precioTotal = serviciosContratados.stream().mapToDouble(Servicio::getPrecio).sum();
+				conjunto.setPrecioTotal(precioTotal);
+
+
+				Long idNuevo = db4oService.getNuevoIdConjunto();
+				conjunto.setId(idNuevo);
+				
+				
+				
+				db4oService.guardarConjunto(conjunto);
+				
+				for (Servicio s : serviciosContratados) {
+			        if (s.getConjuntoContratado() == null) {
+			            s.setConjuntoContratado(new ArrayList<>());
+			        }
+			        s.getConjuntoContratado().add(idNuevo);
+			        db4oService.actualizarServicio(s);  
+			    }
+
+				
+				System.out.println(conjunto);
+			}
+
 		}
 
 		carnetService.update(carnet);
 		System.out.println("Se ha sellado el carnet");
+		alertaInfo("INFO", "Se ha alojado a: "+peregrino.getNombrePeregrino());
 	}
 
 	@FXML
@@ -346,9 +408,7 @@ public class paradaController implements Initializable {
 
 		ObservableList<String> items = FXCollections.observableArrayList(nombresServicios);
 
-		listaServicios.setItems(items); // listViewServicios es un ListView<String>
-
-		// Configura para permitir selección múltiple
+		listaServicios.setItems(items);
 		listaServicios.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 	}
 

@@ -2,7 +2,6 @@ package com.Tarea3AD.Tarea3AD_PabloMerino.repository;
 
 import java.util.List;
 
-import com.Tarea3AD.Tarea3AD_PabloMerino.utils.copy.ContadorID;
 import com.db4o.ObjectContainer;
 import com.db4o.ObjectSet;
 import com.db4o.query.Predicate;

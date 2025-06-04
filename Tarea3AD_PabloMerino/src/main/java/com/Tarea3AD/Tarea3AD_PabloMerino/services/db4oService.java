@@ -8,6 +8,7 @@ import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.ConjuntoContratado;
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Servicio;
 import com.Tarea3AD.Tarea3AD_PabloMerino.repository.Db4oRepository;
 import com.Tarea3AD.Tarea3AD_PabloMerino.utils.copy.ContadorID;
+import com.Tarea3AD.Tarea3AD_PabloMerino.utils.copy.ContadorIdConjunto;
 import com.db4o.ObjectContainer;
 import com.db4o.query.Predicate;
 
@@ -17,11 +18,13 @@ public class db4oService {
 	private final Db4oRepository<Servicio> servicioRepo;
 	private final Db4oRepository<ConjuntoContratado> conjuntoRepo;
 	private final Db4oRepository<ContadorID> contadorRepo;
+	private final  Db4oRepository<ContadorIdConjunto> contadorConjuntoRepo;
 
 	public db4oService(ObjectContainer db) {
 		this.servicioRepo = new Db4oRepository<>(db, Servicio.class);
 		this.conjuntoRepo = new Db4oRepository<>(db, ConjuntoContratado.class);
 		this.contadorRepo = new Db4oRepository<>(db, ContadorID.class);
+		this.contadorConjuntoRepo= new Db4oRepository<>(db, ContadorIdConjunto.class);
 		
 	}
 
@@ -39,7 +42,24 @@ public class db4oService {
 	    }
 
 	    long id = contador.getSiguienteId();
-	    contadorRepo.save(contador); // Guarda el contador actualizado
+	    contadorRepo.save(contador); 
+	    return id;
+	}
+	
+	public long getNuevoIdConjunto() {
+	    ContadorIdConjunto contadorConjunto = contadorConjuntoRepo.findByPredicate(new Predicate<ContadorIdConjunto>() {
+	        @Override
+	        public boolean match(ContadorIdConjunto c) {
+	            return true; 
+	        }
+	    });
+
+	    if (contadorConjunto == null) {
+	    	contadorConjunto = new ContadorIdConjunto();
+	    }
+
+	    long id = contadorConjunto.getSiguienteId();
+	    contadorConjuntoRepo.save(contadorConjunto); 
 	    return id;
 	}
 

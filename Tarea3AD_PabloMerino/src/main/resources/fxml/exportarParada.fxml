@@ -8,6 +8,7 @@
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Line?>
@@ -64,7 +65,7 @@
 						<Font name="System Bold" size="20.0" />
 					</font>
 				</Label>
-				<Button fx:id="btnAlojar" layoutX="100.0" layoutY="382.0" mnemonicParsing="false" onAction="#sellarParada" prefHeight="25.0" prefWidth="65.0" style="-fx-background-color: green;" text="Alojar" textFill="WHITE">
+				<Button fx:id="btnAlojar" layoutX="100.0" layoutY="439.0" mnemonicParsing="false" onAction="#sellarParada" prefHeight="25.0" prefWidth="65.0" style="-fx-background-color: green;" text="Alojar" textFill="WHITE">
 					<font>
 						<Font name="System Bold" size="12.0" />
 					</font>
@@ -74,10 +75,12 @@
 						<Font size="11.0" />
 					</font>
 				</Label>
-				<CheckBox fx:id="checkVIP" layoutX="90.0" layoutY="252.0" mnemonicParsing="false" text="Estancia VIP" textFill="#5dbef4" />
+				<CheckBox fx:id="checkVIP" layoutX="90.0" layoutY="234.0" mnemonicParsing="false" text="Estancia VIP" textFill="#5dbef4" />
 				<ComboBox fx:id="cmbxPeregrinos" layoutX="60.0" layoutY="173.0" prefWidth="150.0" promptText="Selecciona un peregrino" />
-            <CheckBox fx:id="checkAlojar" layoutX="93.0" layoutY="223.0" mnemonicParsing="false" text="Alojar" textFill="#5dbef4" />
-            <ListView fx:id="listaServicios" layoutX="37.0" layoutY="281.0" prefHeight="79.0" prefWidth="192.0" />
+            <CheckBox fx:id="checkAlojar" layoutX="93.0" layoutY="205.0" mnemonicParsing="false" text="Alojar" textFill="#5dbef4" />
+            <ListView fx:id="listaServicios" layoutX="37.0" layoutY="258.0" prefHeight="79.0" prefWidth="192.0" />
+            <ComboBox fx:id="cmbxModoPago" layoutX="58.0" layoutY="345.0" prefWidth="150.0" promptText="Modo de pago: " />
+            <TextField fx:id="extra" layoutX="45.0" layoutY="383.0" prefHeight="47.0" prefWidth="176.0" promptText="Extra: " />
 			</children>
 		</AnchorPane>
 	</children>

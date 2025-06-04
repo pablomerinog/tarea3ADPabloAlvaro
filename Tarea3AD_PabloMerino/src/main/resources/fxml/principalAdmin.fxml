@@ -41,7 +41,7 @@
 					</font>
 				</Button>
 				<Line endX="-110.0" endY="407.0" layoutX="110.0" layoutY="-304.0" startX="183.5" startY="407.0" stroke="#a4dcf4" />
-				<TableView fx:id="tablaServicios" layoutX="313.0" layoutY="278.0" prefHeight="214.0" prefWidth="391.0">
+				<TableView fx:id="tablaServicios" layoutX="316.0" layoutY="268.0" prefHeight="214.0" prefWidth="391.0">
 					<columns>
 						<TableColumn fx:id="colSeleccionar" text="Seleccionar" />
 						<TableColumn fx:id="colId" prefWidth="73.5999755859375" text="Id" />
@@ -70,38 +70,35 @@
 						<Font name="System Bold" size="20.0" />
 					</font>
 				</Label>
-				<Label layoutX="508.0" layoutY="41.0" text="Nombre del servicio:" />
-				<Label layoutX="325.0" layoutY="91.0" prefHeight="17.0" prefWidth="119.0" text="Precio del servicio:" />
-				<TextField fx:id="nombreServicio" layoutX="506.0" layoutY="59.0" promptText="Nombre del servicio:" />
-				<TextField fx:id="precioServicio" layoutX="323.0" layoutY="111.0" promptText="Precio del servicio:" />
-				<Button fx:id="cancelarServicio" layoutX="584.0" layoutY="111.0" mnemonicParsing="false" onAction="#limpiarCampos" style="-fx-background-color: red;" text="Cancelar" textFill="WHITE">
+				<Label layoutX="322.0" layoutY="41.0" text="Nombre del servicio:" />
+				<Label layoutX="511.0" layoutY="40.0" prefHeight="17.0" prefWidth="119.0" text="Precio del servicio:" />
+				<TextField fx:id="nombreServicio" layoutX="320.0" layoutY="59.0" promptText="Nombre del servicio:" />
+				<TextField fx:id="precioServicio" layoutX="509.0" layoutY="60.0" promptText="Precio del servicio:" />
+				<Button fx:id="cancelarServicio" layoutX="486.0" layoutY="96.0" mnemonicParsing="false" onAction="#limpiarCampos" style="-fx-background-color: red;" text="Cancelar" textFill="WHITE">
 					<font>
 						<Font name="System Bold" size="12.0" />
 					</font>
 				</Button>
-				<Button fx:id="btnAñadir" layoutX="513.0" layoutY="111.0" mnemonicParsing="false" onAction="#registrarServicio" style="-fx-background-color: green;" text="Añadir" textFill="WHITE">
+				<Button fx:id="btnAñadir" layoutX="415.0" layoutY="96.0" mnemonicParsing="false" onAction="#registrarServicio" style="-fx-background-color: green;" text="Añadir" textFill="WHITE">
 					<font>
 						<Font name="System Bold" size="12.0" />
 					</font>
 				</Button>
 
-				<Button fx:id="btnAsignarServicios" layoutX="475.0" layoutY="223.0" onAction="#asignarServicios" style="-fx-background-color: green;" text="Asignar " textFill="WHITE">
+				<Button fx:id="btnAsignarServicios" layoutX="478.0" layoutY="213.0" onAction="#asignarServicios" style="-fx-background-color: green;" text="Asignar " textFill="WHITE">
                <font>
                   <Font name="System Bold" size="12.0" />
                </font></Button>
-				<Label layoutX="328.0" layoutY="41.0" text="ID del servicio:" />
-				<TextField fx:id="idServicio" layoutX="326.0" layoutY="59.0" promptText="ID del servicio:" />
-            <ComboBox fx:id="comboParadas" layoutX="310.0" layoutY="223.0" prefWidth="150.0" promptText="Paradas" />
-            <Line endX="-113.50003051757812" endY="407.0" layoutX="407.0" layoutY="-253.0" startX="308.199951171875" startY="407.0" stroke="#a4dcf4" />
-            <Label alignment="CENTER" layoutX="307.0" layoutY="151.0" prefHeight="30.0" prefWidth="176.0" style="&#10;" text="Asignar servicios:" textAlignment="CENTER" textFill="#5dbef4" wrapText="false">
+            <ComboBox fx:id="comboParadas" layoutX="313.0" layoutY="213.0" prefWidth="150.0" promptText="Paradas" />
+            <Line endX="-113.50003051757812" endY="407.0" layoutX="408.0" layoutY="-271.0" startX="308.199951171875" startY="407.0" stroke="#a4dcf4" />
+            <Label alignment="CENTER" layoutX="310.0" layoutY="141.0" prefHeight="30.0" prefWidth="176.0" style="&#10;" text="Asignar servicios:" textAlignment="CENTER" textFill="#5dbef4" wrapText="false">
                <font>
                   <Font name="System Bold" size="20.0" />
                </font>
             </Label>
-            <Label layoutX="310.0" layoutY="201.0" prefHeight="18.0" prefWidth="132.0" text="Selecciona una parada:" />
-            <Label layoutX="310.0" layoutY="179.0" prefHeight="18.0" prefWidth="354.0" text="Selecciona una parada y los servicios que la quieras asignar." textFill="#5dbef4" />
-            <Label layoutX="313.0" layoutY="254.0" prefHeight="18.0" prefWidth="132.0" text="Selecciona los servicios:" />
-            <Line endX="-117.00001525878906" endY="407.0" layoutX="117.0" layoutY="35.0" startX="176.5" startY="407.0" stroke="#a4dcf4" />
+            <Label layoutX="313.0" layoutY="191.0" prefHeight="18.0" prefWidth="132.0" text="Selecciona una parada:" />
+            <Label layoutX="313.0" layoutY="169.0" prefHeight="18.0" prefWidth="354.0" text="Selecciona una parada y los servicios que la quieras asignar." textFill="#5dbef4" />
+            <Label layoutX="316.0" layoutY="244.0" prefHeight="18.0" prefWidth="132.0" text="Selecciona los servicios:" />
 
 			</children>
 		</AnchorPane>
