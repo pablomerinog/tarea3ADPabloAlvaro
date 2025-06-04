@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import com.Tarea3AD.Tarea3AD_PabloMerino.config.StageManager;
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.ConjuntoContratado;
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Parada;
+import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.ParadaFX;
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Servicio;
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.ServicioFX;
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Usuario;
@@ -110,7 +112,21 @@ public class adminController implements Initializable {
 	private TableColumn<ServicioFX, Boolean> colSeleccionar;
 
 	@FXML
-	private ComboBox<Parada> comboParadas;
+	private TableView<ParadaFX> tablaParadas;
+
+	@FXML
+	private TableColumn<ParadaFX, Long> colIdParada;
+
+	@FXML
+	private TableColumn<ParadaFX, String> colNombreParada;
+
+	@FXML
+	private TableColumn<ParadaFX, String> colRegion;
+
+	@FXML
+	private TableColumn<ParadaFX, Boolean> colCheck;
+//	@FXML
+//	private ComboBox<Parada> comboParadas;
 
 	@Autowired
 	private UserService userService;
@@ -130,6 +146,7 @@ public class adminController implements Initializable {
 	private static ObjectContainer db;
 
 	private ObservableList<ServicioFX> serviciosList = FXCollections.observableArrayList();
+	private ObservableList<ParadaFX> paradasList = FXCollections.observableArrayList();
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -158,31 +175,44 @@ public class adminController implements Initializable {
 				}
 			}
 		});
+
+		colIdParada.setCellValueFactory(new PropertyValueFactory<>("idParada"));
+		colNombreParada.setCellValueFactory(new PropertyValueFactory<>("nombreParada"));
+		colRegion.setCellValueFactory(new PropertyValueFactory<>("region"));
+
+		colCheck.setCellValueFactory(cellData -> cellData.getValue().seleccionadoProperty());
+
+		colCheck.setCellFactory(tc -> new CheckBoxTableCell<>());
+
+		colCheck.setCellFactory(tc -> {
+			CheckBoxTableCell<ParadaFX, Boolean> cell = new CheckBoxTableCell<>();
+			cell.setSelectedStateCallback(index -> {
+				ParadaFX parada = tablaParadas.getItems().get(index);
+				return parada.seleccionadoProperty();
+			});
+			return cell;
+		});
+
 		cargarServicios();
 		cargarParadas();
 		tablaServicios.setEditable(true);
 		colSeleccionar.setEditable(true);
+		tablaParadas.setEditable(true);
+		colCheck.setEditable(true);
 		mostrarDb4o();
+
 	}
 
 	private void cargarParadas() {
-		List<Parada> paradas = paradaService.findAll();
-		comboParadas.setItems(FXCollections.observableArrayList(paradas));
+	    List<Parada> paradas = paradaService.findAll();
 
-		comboParadas.setCellFactory(lv -> new ListCell<>() {
-			@Override
-			protected void updateItem(Parada item, boolean empty) {
-				super.updateItem(item, empty);
-				setText(empty || item == null ? null : item.getNombre());
-			}
-		});
-		comboParadas.setButtonCell(new ListCell<>() {
-			@Override
-			protected void updateItem(Parada item, boolean empty) {
-				super.updateItem(item, empty);
-				setText(empty || item == null ? null : item.getNombre());
-			}
-		});
+	    paradasList.clear();
+
+	    for (Parada p : paradas) {
+	        paradasList.add(new ParadaFX(p)); 
+	    }
+
+	    tablaParadas.setItems(paradasList);
 	}
 
 	private void editarServicio(ServicioFX servicioFX) {
@@ -402,6 +432,9 @@ public class adminController implements Initializable {
 		limpiarCampos();
 		alertaInfo("Registro correcto", "La parada se ha registrado con éxito.");
 
+		paradasList.add(new ParadaFX(nuevaParada));
+		
+		tablaParadas.refresh();
 	}
 
 	@FXML
@@ -410,7 +443,7 @@ public class adminController implements Initializable {
 		String nombreServicio = getNombreServicio();
 
 		Double precio = getPrecioServicio();
-		
+
 		if (nombreServicio == null || nombreServicio.isBlank() || precio == null) {
 			alertaError("Datos inválidos", "Debes completar correctamente todos los campos del servicio.");
 			return;
@@ -433,47 +466,75 @@ public class adminController implements Initializable {
 
 	@FXML
 	private void asignarServicios(ActionEvent event) {
-		Parada paradaSeleccionada = comboParadas.getValue();
-		if (paradaSeleccionada == null) {
-			alertaError("Error", "Debes seleccionar una parada.");
+
+		List<Servicio> serviciosSeleccionados = obtenerServiciosSeleccionados();
+		List<Parada> paradasSeleccionadas = obtenerParadasSeleccionadas(); 
+		
+		
+		if (serviciosSeleccionados.isEmpty() || paradasSeleccionadas.isEmpty()) {
+			alertaError("Selección incompleta", "Debes seleccionar al menos un servicio y una parada.");
 			return;
 		}
 
-		ObservableList<Servicio> seleccionados = FXCollections.observableArrayList();
+		boolean asignacionRealizada = false;
+
+		for (Servicio servicio : serviciosSeleccionados) {
+
+			List<Long> idParadas = servicio.getIdParadas();
+			if (idParadas == null) {
+				idParadas = new ArrayList<>();
+				servicio.setIdParadas(idParadas);
+			}
+
+			for (Parada parada : paradasSeleccionadas) {
+				if (!idParadas.contains(parada.getId())) {
+					idParadas.add(parada.getId());
+				}
+			}
+
+			db4oService.guardarServicio(servicio);
+
+			System.out.println("Servicio asignado:");
+			System.out.println("ID: " + servicio.getIdServicio());
+			System.out.println("Nombre: " + servicio.getNombreServicio());
+			System.out.println("Paradas asignadas: " + servicio.getIdParadas());
+
+			asignacionRealizada = true;
+		}
+
+		if (asignacionRealizada) {
+			alertaInfo("Asignación correcta", "Los servicios han sido asignados a las paradas seleccionadas.");
+
+			
+			for (ServicioFX servicioFX : tablaServicios.getItems()) {
+				servicioFX.setSeleccionado(false);
+			}
+			for (ParadaFX paradaFX : tablaParadas.getItems()) {
+				paradaFX.setSeleccionado(false);
+			}
+			tablaServicios.refresh();
+			tablaParadas.refresh();
+		}
+	}
+
+	private List<Servicio> obtenerServiciosSeleccionados() {
+		List<Servicio> seleccionados = new ArrayList<>();
 		for (ServicioFX servicioFX : serviciosList) {
 			if (servicioFX.isSeleccionado()) {
 				seleccionados.add(servicioFX.getServicio());
 			}
 		}
+		return seleccionados;
+	}
 
-		boolean seleccionado = false;
-
-		for (ServicioFX servicioFX : tablaServicios.getItems()) {
-			Servicio servicio = servicioFX.getServicio();
-			if (servicioFX.isSeleccionado()) {
-				if (!servicio.getIdParadas().contains(paradaSeleccionada.getId())) {
-					List<Long> paradas = new ArrayList<>(servicio.getIdParadas());
-					paradas.add(paradaSeleccionada.getId());
-					servicio.setIdParadas(paradas);
-				}
-
-				db4oService.guardarServicio(servicio);
-
-				System.out.println("Servicio asignado:");
-				System.out.println("ID: " + servicio.getIdServicio());
-				System.out.println("Nombre: " + servicio.getNombreServicio());
-				System.out.println("Paradas asignadas: " + servicio.getIdParadas());
-				seleccionado = true;
-			}
-		}
-
-		alertaInfo("Perfecto!", "Servicios asignados correctamente a la parada: " + paradaSeleccionada.getNombre());
-
-		for (ServicioFX servicioFX : tablaServicios.getItems()) {
-			servicioFX.setSeleccionado(false);
-		}
-
-		tablaServicios.refresh();
+	private List<Parada> obtenerParadasSeleccionadas() {
+	    List<Parada> seleccionadas = new ArrayList<>();
+	    for (ParadaFX parada : paradasList) {
+	        if (parada.isSeleccionado()) {
+	            seleccionadas.add(parada.getParada());
+	        }
+	    }
+	    return seleccionadas;
 	}
 
 	public ObservableList<Servicio> getServiciosSeleccionados() {
@@ -507,8 +568,8 @@ public class adminController implements Initializable {
 			System.out.println("Precio: " + c.getPrecioTotal());
 			System.out.println("Modo de pago: " + c.getModoPago());
 			System.out.println("Extra: " + c.getExtra());
-			System.out.println("Servicios: "+c.getServicios());
-			
+			System.out.println("Servicios: " + c.getServicios());
+
 		}
 		System.out.println("----------------------------------");
 	}

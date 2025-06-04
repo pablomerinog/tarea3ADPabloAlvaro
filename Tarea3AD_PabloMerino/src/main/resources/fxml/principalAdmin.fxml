@@ -41,13 +41,13 @@
 					</font>
 				</Button>
 				<Line endX="-110.0" endY="407.0" layoutX="110.0" layoutY="-304.0" startX="183.5" startY="407.0" stroke="#a4dcf4" />
-				<TableView fx:id="tablaServicios" layoutX="316.0" layoutY="268.0" prefHeight="214.0" prefWidth="391.0">
+				<TableView fx:id="tablaServicios" layoutX="304.0" layoutY="268.0" prefHeight="214.0" prefWidth="222.0">
 					<columns>
-						<TableColumn fx:id="colSeleccionar" text="Seleccionar" />
-						<TableColumn fx:id="colId" prefWidth="73.5999755859375" text="Id" />
-						<TableColumn fx:id="colNombre" prefWidth="115.199951171875" text="Nombre" />
-						<TableColumn fx:id="colPrecio" prefWidth="103.20004272460938" text="Precio" />
-						<TableColumn fx:id="colEditar" minWidth="7.0" prefWidth="99.2000732421875" text="Editar" />
+						<TableColumn fx:id="colSeleccionar" prefWidth="28.0" text="Seleccionar" />
+						<TableColumn fx:id="colId" prefWidth="33.0" text="Id" />
+						<TableColumn fx:id="colNombre" prefWidth="75.0" text="Nombre" />
+						<TableColumn fx:id="colPrecio" prefWidth="43.0" text="€" />
+						<TableColumn fx:id="colEditar" minWidth="7.0" prefWidth="43.0" text="Editar" />
 					</columns>
 				</TableView>
 
@@ -99,6 +99,14 @@
             <Label layoutX="313.0" layoutY="191.0" prefHeight="18.0" prefWidth="132.0" text="Selecciona una parada:" />
             <Label layoutX="313.0" layoutY="169.0" prefHeight="18.0" prefWidth="354.0" text="Selecciona una parada y los servicios que la quieras asignar." textFill="#5dbef4" />
             <Label layoutX="316.0" layoutY="244.0" prefHeight="18.0" prefWidth="132.0" text="Selecciona los servicios:" />
+            <TableView fx:id="tablaParadas" layoutX="532.0" layoutY="268.0" prefHeight="214.0" prefWidth="176.0">
+              <columns>
+                <TableColumn fx:id="colCheck" prefWidth="27.66668701171875" text="Seleccionar" />
+                <TableColumn fx:id="colIdParada" prefWidth="33.33331298828125" text="Id" />
+                  <TableColumn fx:id="colNombreParada" prefWidth="73.33331298828125" text="Nombre" />
+                  <TableColumn fx:id="colRegion" prefWidth="38.66668701171875" text="Región" />
+              </columns>
+            </TableView>
 
 			</children>
 		</AnchorPane>

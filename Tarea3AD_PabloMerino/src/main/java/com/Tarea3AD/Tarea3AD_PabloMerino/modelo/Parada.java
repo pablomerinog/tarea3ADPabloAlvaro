@@ -1,8 +1,6 @@
 package com.Tarea3AD.Tarea3AD_PabloMerino.modelo;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import jakarta.persistence.CascadeType;
@@ -12,11 +10,10 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 
 @Entity
 @Table(name = "Paradas")
@@ -40,10 +37,12 @@ public class Parada {
 //	private Usuario usuario;
 
 	private Long idUsuario;
-	
-	@OneToMany(mappedBy = "parada", cascade = { CascadeType.MERGE } , fetch = FetchType.LAZY)
+
+	@OneToMany(mappedBy = "parada", cascade = { CascadeType.MERGE }, fetch = FetchType.LAZY)
 	private Set<PereParada> pereParada = new HashSet<>();
 
+	private transient boolean seleccionado = false;
+	
 	public Parada(Long id, String nombre, char region, String responsable, Long idUsuario) {
 		super();
 		this.id = id;
@@ -98,6 +97,8 @@ public class Parada {
 		return id;
 	}
 
+	
+
 	public void setId(Long id) {
 		this.id = id;
 	}
@@ -134,12 +135,18 @@ public class Parada {
 		this.idUsuario = idUsuario;
 	}
 
-
-
 	@Override
 	public String toString() {
 		return "Parada [id=" + id + ", nombre=" + nombre + ", region=" + region + ", responsable=" + responsable
 				+ ", idUsuario=" + idUsuario + ", pereParada=" + pereParada + "]";
+	}
+	
+	public boolean isSeleccionado() {
+		return seleccionado;
+	}
+
+	public void setSeleccionado(boolean seleccionado) {
+		this.seleccionado = seleccionado;
 	}
 
 //	public Usuario getUsuario() {
@@ -155,7 +162,5 @@ public class Parada {
 //		return "Parada [id=" + id + ", nombre=" + nombre + ", region=" + region + ", responsable=" + responsable
 //				+ ", usuario=" + usuario + "]";
 //	}
-	
-	
 
 }
