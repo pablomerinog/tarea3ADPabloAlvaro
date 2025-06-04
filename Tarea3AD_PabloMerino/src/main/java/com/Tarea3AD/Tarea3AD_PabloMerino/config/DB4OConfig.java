@@ -29,5 +29,7 @@ public class DB4OConfig {
 		public Db4oRepository<ConjuntoContratado> conjuntoContratadoDb4oRepository(ObjectContainer db4oContainer) {
 			return new Db4oRepository<>(db4oContainer, ConjuntoContratado.class);
 		}
+		
+		//PRUEBA
 	}
 }
