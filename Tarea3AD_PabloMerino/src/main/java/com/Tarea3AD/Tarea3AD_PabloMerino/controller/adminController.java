@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 
+import com.Tarea3AD.Tarea3AD_PabloMerino.config.ExistDBConfig;
 import com.Tarea3AD.Tarea3AD_PabloMerino.config.StageManager;
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.ConjuntoContratado;
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Parada;
@@ -458,7 +459,8 @@ public class adminController implements Initializable {
 		parada.setIdUsuario(nuevoUsuario.getId());
 
 		Parada nuevaParada = paradaService.save(parada);
-
+		ExistDBConfig.getInstance().crearColeccionParada(nuevaParada.getNombre());
+		
 		limpiarCampos();
 		alertaInfo("Registro correcto", "La parada se ha registrado con éxito.");
 
