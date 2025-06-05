@@ -474,7 +474,7 @@ public class paradaController implements Initializable {
 	            alert.showAndWait();
 	            return;
 	        }
-
+//
 	        System.out.println("Dirección: " + direccion);
 	        System.out.println("Localidad: " + localidad);
 	        System.out.println("Peso: " + peso);
