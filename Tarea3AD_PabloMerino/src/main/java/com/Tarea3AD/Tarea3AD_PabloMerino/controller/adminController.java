@@ -642,8 +642,9 @@ public class adminController implements Initializable {
 			System.out.println("Modo de pago: " + c.getModoPago());
 			System.out.println("Extra: " + c.getExtra());
 			System.out.println("Servicios: " + c.getServicios());
+			System.out.println("----------------------------------");
 
 		}
-		System.out.println("----------------------------------");
+		
 	}
 }
