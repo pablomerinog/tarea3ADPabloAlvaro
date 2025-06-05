@@ -199,6 +199,12 @@ public class adminController implements Initializable {
 		colCheck.setEditable(true);
 		mostrarDb4o();
 
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+		    if (db != null) {
+		    	db.close();
+		    }
+		}));
+		
 	}
 
 	private void cargarParadas() {
@@ -488,59 +494,109 @@ public class adminController implements Initializable {
 		precioServicio.clear();
 	}
 
+	
+
+	
+//	@FXML
+//	private void asignarServicios(ActionEvent event) {
+//	    List<Servicio> serviciosSeleccionados = obtenerServiciosSeleccionados();
+//	    List<Parada> paradasSeleccionadas = obtenerParadasSeleccionadas();
+//
+//	    if (paradasSeleccionadas == null || paradasSeleccionadas.isEmpty()) {
+//	        alertaError("Error", "Debes seleccionar al menos una parada.");
+//	        return;
+//	    }
+//
+//	    for (Parada parada : paradasSeleccionadas) {
+//	        Long idParada = parada.getId();
+//
+//	       
+//	        List<Servicio> serviciosAntiguos = db4oService.listarServiciosPorIdParada(idParada);
+//
+//	        for (Servicio servicioAntiguo : serviciosAntiguos) {
+//	            
+//	            if (!serviciosSeleccionados.contains(servicioAntiguo)) {
+//	                
+//	                Servicio servicioBD = db4oService.buscarServicioPorId(servicioAntiguo.getIdServicio());
+//	                List<Long> idParadas = servicioBD.getIdParadas();
+//	               idParadas.remove(idParada);
+//	               servicioBD.setIdParadas(idParadas);
+//	                db4oService.guardarServicio(servicioBD);
+//	            }
+//	        }
+//
+//	        for (Servicio servicioSeleccionado : serviciosSeleccionados) {
+//	           
+//	            Servicio servicioBD = db4oService.buscarServicioPorId(servicioSeleccionado.getIdServicio());
+//
+//	            if (servicioBD.getIdParadas() == null) {
+//	                servicioBD.setIdParadas(new ArrayList<>());
+//	            }
+//
+//	            if (!servicioBD.getIdParadas().contains(idParada)) {
+//	            	  List<Long> idParadas = servicioBD.getIdParadas();
+//	            	
+//	            	  idParadas.add(idParada);
+//	            	  servicioBD.setIdParadas(idParadas);
+//	                db4oService.guardarServicio(servicioBD);
+//	            }
+//	        }
+//	    }
+//
+//	    alertaInfo("Asignación actualizada", "Las asociaciones se han actualizado correctamente.");
+//
+//	
+//	    serviciosList.forEach(s -> s.setSeleccionado(false));
+//	    paradasList.forEach(p -> p.setSeleccionado(false));
+//	    tablaServicios.refresh();
+//	    tablaParadas.refresh();
+//	}
+
 	@FXML
 	private void asignarServicios(ActionEvent event) {
 		List<Servicio> serviciosSeleccionados = obtenerServiciosSeleccionados();
 		List<Parada> paradasSeleccionadas = obtenerParadasSeleccionadas();
 
 		if (paradasSeleccionadas.isEmpty()) {
-			alertaError("Selección incompleta", "Debes seleccionar al menos una parada.");
+			alertaError("Error", "Debes seleccionar una parada.");
 			return;
 		}
 
-		// Primero procesamos todas las paradas seleccionadas
 		for (Parada parada : paradasSeleccionadas) {
 			Long idParada = parada.getId();
 
-			// Obtenemos los servicios actualmente asociados a esta parada
 			List<Servicio> serviciosActuales = db4oService.listarServiciosPorIdParada(idParada);
 
-			// Servicios que deben estar asociados (los seleccionados)
 			List<Servicio> serviciosDeseados = serviciosSeleccionados;
 
-			// 1. Eliminar asociaciones que ya no deben estar
 			for (Servicio servicioExistente : serviciosActuales) {
 				if (!serviciosDeseados.contains(servicioExistente)) {
 					servicioExistente.getIdParadas().remove(idParada);
-					db4oService.actualizarServicio(servicioExistente);
+					db4oService.guardarServicio(servicioExistente);
 				}
 			}
 
-			// 2. Añadir nuevas asociaciones
 			for (Servicio servicioDeseado : serviciosDeseados) {
-				// Inicializar lista si es null
 				if (servicioDeseado.getIdParadas() == null) {
 					servicioDeseado.setIdParadas(new ArrayList<>());
 				}
-
-				// Si no está ya asociado, lo añadimos
+				
 				if (!servicioDeseado.getIdParadas().contains(idParada)) {
 					servicioDeseado.getIdParadas().add(idParada);
-					db4oService.actualizarServicio(servicioDeseado);
+					db4oService.guardarServicio(servicioDeseado);
 				}
 			}
 		}
-
+		 
 		alertaInfo("Asignación actualizada", "Las asociaciones se han actualizado correctamente.");
 
-		// Limpiar selecciones
 		serviciosList.forEach(servicioFX -> servicioFX.setSeleccionado(false));
 		paradasList.forEach(paradaFX -> paradaFX.setSeleccionado(false));
 		tablaServicios.refresh();
 		tablaParadas.refresh();
 		
 	}
-
+	
 	private List<Servicio> obtenerServiciosSeleccionados() {
 		List<Servicio> seleccionados = new ArrayList<>();
 		for (ServicioFX servicioFX : serviciosList) {

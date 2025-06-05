@@ -32,26 +32,31 @@ import com.Tarea3AD.Tarea3AD_PabloMerino.services.PereParadaService;
 import com.Tarea3AD.Tarea3AD_PabloMerino.services.PeregrinoService;
 import com.Tarea3AD.Tarea3AD_PabloMerino.services.UserService;
 import com.Tarea3AD.Tarea3AD_PabloMerino.services.db4oService;
-import com.Tarea3AD.Tarea3AD_PabloMerino.utils.copy.ContadorIdConjunto;
 import com.Tarea3AD.Tarea3AD_PabloMerino.vistas.FxmlView;
-import com.db4o.ObjectSet;
 
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 @Controller
 public class paradaController implements Initializable {
@@ -182,6 +187,27 @@ public class paradaController implements Initializable {
 
 		cmbxModoPago.setItems(FXCollections.observableArrayList("E - Efectivo", "T - Tarjeta", "B - Bizum"));
 		cmbxModoPago.getSelectionModel().selectFirst();
+		
+		listaServicios.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+		listaServicios.getSelectionModel().getSelectedItems().addListener((ListChangeListener<String>) change -> {
+			 ObservableList<String> seleccionados = listaServicios.getSelectionModel().getSelectedItems();
+	            boolean ventanaEnvioAbierta = false;
+		    while (change.next()) {
+		        if (change.wasAdded()) {
+		            for (String servicio : change.getAddedSubList()) {
+		                
+		                if (seleccionados.contains("envío a casa") && !ventanaEnvioAbierta) {
+		                    ventanaEnvioAbierta = true;
+		                    mostrarVentanaEnvioCasa();
+		                    ventanaEnvioAbierta = false;
+		                }
+		            }
+		        }
+		    }
+		});
+		
+    
 	}
 
 	public void cargarParadas() {
@@ -411,5 +437,70 @@ public class paradaController implements Initializable {
 		listaServicios.setItems(items);
 		listaServicios.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 	}
+	
+	private void mostrarVentanaEnvioCasa() {
+	    Stage stage = new Stage();
+	    stage.setTitle("Datos de Envío a Casa");
+
+	   
+	    TextField tfDireccion = new TextField();
+	    tfDireccion.setPromptText("Dirección completa");
+
+	    TextField tfLocalidad = new TextField();
+	    tfLocalidad.setPromptText("Localidad");
+
+	    TextField tfPeso = new TextField();
+	    tfPeso.setPromptText("Peso (kg)");
+
+	    TextField tfDimensiones = new TextField();
+	    tfDimensiones.setPromptText("Dimensiones (largo x ancho x alto)");
+
+	    CheckBox cbUrgente = new CheckBox("Envío urgente");
+	    cbUrgente.setSelected(false);
+
+	    Button btnEnviar = new Button("Enviar");
+
+	    btnEnviar.setOnAction(e -> {
+	        
+	        String direccion = tfDireccion.getText();
+	        String localidad = tfLocalidad.getText();
+	        String peso = tfPeso.getText();
+	        String dimensiones = tfDimensiones.getText();
+	        boolean urgente = cbUrgente.isSelected();
+
+	      
+	        if(direccion.isEmpty() || localidad.isEmpty() || peso.isEmpty() || dimensiones.isEmpty()) {
+	            Alert alert = new Alert(Alert.AlertType.ERROR, "Por favor, rellena todos los campos.");
+	            alert.showAndWait();
+	            return;
+	        }
+
+	        System.out.println("Dirección: " + direccion);
+	        System.out.println("Localidad: " + localidad);
+	        System.out.println("Peso: " + peso);
+	        System.out.println("Dimensiones: " + dimensiones);
+	        System.out.println("Urgente: " + urgente);
+
+	        
+	        stage.close();
+	    });
+
+	    VBox layout = new VBox(10);
+	    layout.setPadding(new Insets(15));
+	    layout.getChildren().addAll(
+	        new Label("Dirección:"), tfDireccion,
+	        new Label("Localidad:"), tfLocalidad,
+	        new Label("Peso (kg):"), tfPeso,
+	        new Label("Dimensiones:"), tfDimensiones,
+	        cbUrgente,
+	        btnEnviar
+	    );
+
+	    Scene scene = new Scene(layout, 350, 400);
+	    stage.setScene(scene);
+	    stage.initModality(Modality.APPLICATION_MODAL); // Para que bloquee la ventana principal
+	    stage.showAndWait();
+	}
+
 
 }

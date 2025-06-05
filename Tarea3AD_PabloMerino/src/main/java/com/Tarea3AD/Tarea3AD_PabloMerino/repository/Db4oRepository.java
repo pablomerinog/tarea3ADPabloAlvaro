@@ -7,11 +7,9 @@ import com.db4o.ObjectSet;
 import com.db4o.query.Predicate;
 
 public class Db4oRepository<T> {
-	
+
 	private final ObjectContainer db;
 	private final Class<T> clazz;
-	
-	
 
 	public Db4oRepository(ObjectContainer db, Class<T> clazz) {
 		this.db = db;
@@ -43,8 +41,12 @@ public class Db4oRepository<T> {
 			T original = result.next();
 			db.delete(original);
 			db.store(objetoActualizado);
+			db.commit();
 		}
 	}
 
+	public void close() {
+		db.close();
+	}
 
 }

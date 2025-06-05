@@ -18,55 +18,54 @@ public class db4oService {
 	private final Db4oRepository<Servicio> servicioRepo;
 	private final Db4oRepository<ConjuntoContratado> conjuntoRepo;
 	private final Db4oRepository<ContadorID> contadorRepo;
-	private final  Db4oRepository<ContadorIdConjunto> contadorConjuntoRepo;
+	private final Db4oRepository<ContadorIdConjunto> contadorConjuntoRepo;
 
 	public db4oService(ObjectContainer db) {
 		this.servicioRepo = new Db4oRepository<>(db, Servicio.class);
 		this.conjuntoRepo = new Db4oRepository<>(db, ConjuntoContratado.class);
 		this.contadorRepo = new Db4oRepository<>(db, ContadorID.class);
-		this.contadorConjuntoRepo= new Db4oRepository<>(db, ContadorIdConjunto.class);
-		
-	}
+		this.contadorConjuntoRepo = new Db4oRepository<>(db, ContadorIdConjunto.class);
 
+	}
 
 	public long getNuevoId() {
-	    ContadorID contador = contadorRepo.findByPredicate(new Predicate<ContadorID>() {
-	        @Override
-	        public boolean match(ContadorID c) {
-	            return true; 
-	        }
-	    });
+		ContadorID contador = contadorRepo.findByPredicate(new Predicate<ContadorID>() {
+			@Override
+			public boolean match(ContadorID c) {
+				return true;
+			}
+		});
 
-	    if (contador == null) {
-	        contador = new ContadorID();
-	    }
+		if (contador == null) {
+			contador = new ContadorID();
+		}
 
-	    long id = contador.getSiguienteId();
-	    contadorRepo.save(contador); 
-	    return id;
+		long id = contador.getSiguienteId();
+		contadorRepo.save(contador);
+		return id;
 	}
-	
+
 	public long getNuevoIdConjunto() {
-	    ContadorIdConjunto contadorConjunto = contadorConjuntoRepo.findByPredicate(new Predicate<ContadorIdConjunto>() {
-	        @Override
-	        public boolean match(ContadorIdConjunto c) {
-	            return true; 
-	        }
-	    });
+		ContadorIdConjunto contadorConjunto = contadorConjuntoRepo.findByPredicate(new Predicate<ContadorIdConjunto>() {
+			@Override
+			public boolean match(ContadorIdConjunto c) {
+				return true;
+			}
+		});
 
-	    if (contadorConjunto == null) {
-	    	contadorConjunto = new ContadorIdConjunto();
-	    }
+		if (contadorConjunto == null) {
+			contadorConjunto = new ContadorIdConjunto();
+		}
 
-	    long id = contadorConjunto.getSiguienteId();
-	    contadorConjuntoRepo.save(contadorConjunto); 
-	    return id;
+		long id = contadorConjunto.getSiguienteId();
+		contadorConjuntoRepo.save(contadorConjunto);
+		return id;
 	}
 
-    
 	// Servicio
 	public void guardarServicio(Servicio servicio) {
 		servicioRepo.save(servicio);
+
 	}
 
 	public void eliminarServicio(Servicio servicio) {
@@ -92,11 +91,11 @@ public class db4oService {
 				.filter(servicio -> servicio.getIdParadas() != null && servicio.getIdParadas().contains(idParada))
 				.toList();
 	}
-	
+
 	public List<Servicio> obtenerServiciosDeParada(Long idParada) {
-	    return servicioRepo.findAll().stream()
-	            .filter(servicio -> servicio.getIdParadas() != null && servicio.getIdParadas().contains(idParada))
-	            .toList();
+		return servicioRepo.findAll().stream()
+				.filter(servicio -> servicio.getIdParadas() != null && servicio.getIdParadas().contains(idParada))
+				.toList();
 	}
 
 	public void actualizarServicio(Servicio servicioActualizado) {
