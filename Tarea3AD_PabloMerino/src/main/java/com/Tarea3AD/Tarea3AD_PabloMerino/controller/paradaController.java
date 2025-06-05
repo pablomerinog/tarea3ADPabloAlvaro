@@ -15,9 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 
+import com.Tarea3AD.Tarea3AD_PabloMerino.config.ObjectDBConfig;
 import com.Tarea3AD.Tarea3AD_PabloMerino.config.StageManager;
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Carnet;
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.ConjuntoContratado;
+import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Direccion;
+import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.EnvioACasa;
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Estancia;
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Parada;
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.PereParada;
@@ -26,6 +29,7 @@ import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Servicio;
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Sesion;
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Usuario;
 import com.Tarea3AD.Tarea3AD_PabloMerino.services.CarnetService;
+import com.Tarea3AD.Tarea3AD_PabloMerino.services.EnvioACasaService;
 import com.Tarea3AD.Tarea3AD_PabloMerino.services.EstanciaService;
 import com.Tarea3AD.Tarea3AD_PabloMerino.services.ParadaService;
 import com.Tarea3AD.Tarea3AD_PabloMerino.services.PereParadaService;
@@ -34,6 +38,7 @@ import com.Tarea3AD.Tarea3AD_PabloMerino.services.UserService;
 import com.Tarea3AD.Tarea3AD_PabloMerino.services.db4oService;
 import com.Tarea3AD.Tarea3AD_PabloMerino.vistas.FxmlView;
 
+import jakarta.persistence.EntityManager;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -133,6 +138,8 @@ public class paradaController implements Initializable {
 
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private EnvioACasaService envioService;
 
 	@Autowired
 	private PeregrinoService pereService;
@@ -187,27 +194,26 @@ public class paradaController implements Initializable {
 
 		cmbxModoPago.setItems(FXCollections.observableArrayList("E - Efectivo", "T - Tarjeta", "B - Bizum"));
 		cmbxModoPago.getSelectionModel().selectFirst();
-		
+
 		listaServicios.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
 		listaServicios.getSelectionModel().getSelectedItems().addListener((ListChangeListener<String>) change -> {
-			 ObservableList<String> seleccionados = listaServicios.getSelectionModel().getSelectedItems();
-	            boolean ventanaEnvioAbierta = false;
-		    while (change.next()) {
-		        if (change.wasAdded()) {
-		            for (String servicio : change.getAddedSubList()) {
-		                
-		                if (seleccionados.contains("envío a casa") && !ventanaEnvioAbierta) {
-		                    ventanaEnvioAbierta = true;
-		                    mostrarVentanaEnvioCasa();
-		                    ventanaEnvioAbierta = false;
-		                }
-		            }
-		        }
-		    }
+			ObservableList<String> seleccionados = listaServicios.getSelectionModel().getSelectedItems();
+			boolean ventanaEnvioAbierta = false;
+			while (change.next()) {
+				if (change.wasAdded()) {
+					for (String servicio : change.getAddedSubList()) {
+
+						if (seleccionados.contains("envío a casa") && !ventanaEnvioAbierta) {
+							ventanaEnvioAbierta = true;
+							mostrarVentanaEnvioCasa();
+							ventanaEnvioAbierta = false;
+						}
+					}
+				}
+			}
 		});
-		
-    
+
 	}
 
 	public void cargarParadas() {
@@ -319,23 +325,19 @@ public class paradaController implements Initializable {
 				double precioTotal = serviciosContratados.stream().mapToDouble(Servicio::getPrecio).sum();
 				conjunto.setPrecioTotal(precioTotal);
 
-
 				Long idNuevo = db4oService.getNuevoIdConjunto();
 				conjunto.setId(idNuevo);
-				
-				
-				
-				db4oService.guardarConjunto(conjunto);
-				
-				for (Servicio s : serviciosContratados) {
-			        if (s.getConjuntoContratado() == null) {
-			            s.setConjuntoContratado(new ArrayList<>());
-			        }
-			        s.getConjuntoContratado().add(idNuevo);
-			        db4oService.actualizarServicio(s);  
-			    }
 
-				
+				db4oService.guardarConjunto(conjunto);
+
+				for (Servicio s : serviciosContratados) {
+					if (s.getConjuntoContratado() == null) {
+						s.setConjuntoContratado(new ArrayList<>());
+					}
+					s.getConjuntoContratado().add(idNuevo);
+					db4oService.actualizarServicio(s);
+				}
+
 				System.out.println(conjunto);
 			}
 
@@ -343,7 +345,7 @@ public class paradaController implements Initializable {
 
 		carnetService.update(carnet);
 		System.out.println("Se ha sellado el carnet");
-		alertaInfo("INFO", "Se ha alojado a: "+peregrino.getNombrePeregrino());
+		alertaInfo("INFO", "Se ha alojado a: " + peregrino.getNombrePeregrino());
 	}
 
 	@FXML
@@ -437,70 +439,102 @@ public class paradaController implements Initializable {
 		listaServicios.setItems(items);
 		listaServicios.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 	}
-	
+
 	private void mostrarVentanaEnvioCasa() {
-	    Stage stage = new Stage();
-	    stage.setTitle("Datos de Envío a Casa");
+		Stage stage = new Stage();
+		stage.setTitle("Datos de Envío a Casa");
 
-	   
-	    TextField tfDireccion = new TextField();
-	    tfDireccion.setPromptText("Dirección completa");
+		TextField tfDireccion = new TextField();
+		tfDireccion.setPromptText("Dirección completa");
 
-	    TextField tfLocalidad = new TextField();
-	    tfLocalidad.setPromptText("Localidad");
+		TextField tfLocalidad = new TextField();
+		tfLocalidad.setPromptText("Localidad");
 
-	    TextField tfPeso = new TextField();
-	    tfPeso.setPromptText("Peso (kg)");
+		TextField tfPeso = new TextField();
+		tfPeso.setPromptText("Peso (kg)");
 
-	    TextField tfDimensiones = new TextField();
-	    tfDimensiones.setPromptText("Dimensiones (largo x ancho x alto)");
+		TextField tfDimensiones = new TextField();
+		tfDimensiones.setPromptText("Dimensiones (largo x ancho x alto)");
 
-	    CheckBox cbUrgente = new CheckBox("Envío urgente");
-	    cbUrgente.setSelected(false);
+		CheckBox cbUrgente = new CheckBox("Envío urgente");
+		cbUrgente.setSelected(false);
 
-	    Button btnEnviar = new Button("Enviar");
+		Button btnEnviar = new Button("Enviar");
 
-	    btnEnviar.setOnAction(e -> {
-	        
-	        String direccion = tfDireccion.getText();
-	        String localidad = tfLocalidad.getText();
-	        String peso = tfPeso.getText();
-	        String dimensiones = tfDimensiones.getText();
-	        boolean urgente = cbUrgente.isSelected();
+		btnEnviar.setOnAction(e -> {
 
-	      
-	        if(direccion.isEmpty() || localidad.isEmpty() || peso.isEmpty() || dimensiones.isEmpty()) {
-	            Alert alert = new Alert(Alert.AlertType.ERROR, "Por favor, rellena todos los campos.");
-	            alert.showAndWait();
-	            return;
-	        }
-//
-	        System.out.println("Dirección: " + direccion);
-	        System.out.println("Localidad: " + localidad);
-	        System.out.println("Peso: " + peso);
-	        System.out.println("Dimensiones: " + dimensiones);
-	        System.out.println("Urgente: " + urgente);
+			String direccion = tfDireccion.getText();
+			String localidad = tfLocalidad.getText();
+			String peso = tfPeso.getText();
+			double pesoBn = Double.parseDouble(peso);
+			String dimensiones = tfDimensiones.getText(); // 3x6x4 int[3,6,4]
+			String[] partes = dimensiones.split("x");
+			boolean urgente = cbUrgente.isSelected();
+			int[] arrayDimensiones = new int[3];
 
-	        
-	        stage.close();
-	    });
+			Direccion dire = new Direccion(direccion, localidad);
 
-	    VBox layout = new VBox(10);
-	    layout.setPadding(new Insets(15));
-	    layout.getChildren().addAll(
-	        new Label("Dirección:"), tfDireccion,
-	        new Label("Localidad:"), tfLocalidad,
-	        new Label("Peso (kg):"), tfPeso,
-	        new Label("Dimensiones:"), tfDimensiones,
-	        cbUrgente,
-	        btnEnviar
-	    );
+			EnvioACasa envio = new EnvioACasa();
 
-	    Scene scene = new Scene(layout, 350, 400);
-	    stage.setScene(scene);
-	    stage.initModality(Modality.APPLICATION_MODAL); // Para que bloquee la ventana principal
-	    stage.showAndWait();
+			envio.setDireccion(dire);
+			envio.setUrgente(urgente);
+			envio.setPeso(pesoBn);
+
+			if (partes.length == 3) {
+				try {
+					for (int i = 0; i < 3; i++) {
+						arrayDimensiones[i] = Integer.parseInt(partes[i].trim());
+					}
+
+					envio.setVolumen(arrayDimensiones);
+
+				} catch (NumberFormatException ex) {
+					System.out.println("Error: uno de los valores no es un número válido.");
+				}
+			} else {
+				System.out.println("Error: el formato debe ser 'número x número x número' (ej: 3x6x4)");
+			}
+
+			if (direccion.isEmpty() || localidad.isEmpty() || peso.isEmpty() || dimensiones.isEmpty()) {
+				Alert alert = new Alert(Alert.AlertType.ERROR, "Por favor, rellena todos los campos.");
+				alert.showAndWait();
+				return;
+			}
+			
+			EntityManager em = ObjectDBConfig.getEntityManager();
+			try {
+			    em.getTransaction().begin();
+			    envioService.saveEnvio(envio);
+			    em.getTransaction().commit();
+			} catch (Exception ex) {
+			    em.getTransaction().rollback();
+			} finally {
+			    em.close();  
+			}
+			
+
+			System.out.println("Dirección: " + direccion);
+			System.out.println("Localidad: " + localidad);
+			System.out.println("Peso: " + peso);
+			System.out.println("Dimensiones: " + dimensiones);
+			System.out.println("Urgente: " + urgente);
+
+			stage.close();
+			
+			envioService.cerrarConexion();
+		});
+
+		VBox layout = new VBox(10);
+		layout.setPadding(new Insets(15));
+		layout.getChildren().addAll(new Label("Dirección:"), tfDireccion, new Label("Localidad:"), tfLocalidad,
+				new Label("Peso (kg):"), tfPeso, new Label("Dimensiones:"), tfDimensiones, cbUrgente, btnEnviar);
+
+		Scene scene = new Scene(layout, 350, 400);
+		stage.setScene(scene);
+		stage.initModality(Modality.APPLICATION_MODAL);
+		stage.showAndWait();
+		
+		
 	}
-
 
 }

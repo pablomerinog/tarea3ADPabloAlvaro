@@ -35,6 +35,13 @@ public class EnvioACasa extends Servicio {
 		super(idServicio, nombreServicio, precio);
 	}
 
+	
+	public EnvioACasa() {
+		super();
+	}
+
+	
+
 	public Long getId() {
 		return id;
 	}

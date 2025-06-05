@@ -200,11 +200,11 @@ public class adminController implements Initializable {
 		mostrarDb4o();
 
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-		    if (db != null) {
-		    	db.close();
-		    }
+			if (db != null) {
+				db.close();
+			}
 		}));
-		
+
 	}
 
 	private void cargarParadas() {
@@ -494,9 +494,6 @@ public class adminController implements Initializable {
 		precioServicio.clear();
 	}
 
-	
-
-	
 //	@FXML
 //	private void asignarServicios(ActionEvent event) {
 //	    List<Servicio> serviciosSeleccionados = obtenerServiciosSeleccionados();
@@ -554,6 +551,7 @@ public class adminController implements Initializable {
 
 	@FXML
 	private void asignarServicios(ActionEvent event) {
+
 		List<Servicio> serviciosSeleccionados = obtenerServiciosSeleccionados();
 		List<Parada> paradasSeleccionadas = obtenerParadasSeleccionadas();
 
@@ -577,26 +575,26 @@ public class adminController implements Initializable {
 			}
 
 			for (Servicio servicioDeseado : serviciosDeseados) {
-				if (servicioDeseado.getIdParadas() == null) {
-					servicioDeseado.setIdParadas(new ArrayList<>());
-				}
-				
+//				if (servicioDeseado.getIdParadas() == null) {
+//					servicioDeseado.setIdParadas(new ArrayList<>());
+//				}
+
 				if (!servicioDeseado.getIdParadas().contains(idParada)) {
 					servicioDeseado.getIdParadas().add(idParada);
 					db4oService.guardarServicio(servicioDeseado);
 				}
 			}
 		}
-		 
+
 		alertaInfo("Asignación actualizada", "Las asociaciones se han actualizado correctamente.");
 
 		serviciosList.forEach(servicioFX -> servicioFX.setSeleccionado(false));
 		paradasList.forEach(paradaFX -> paradaFX.setSeleccionado(false));
 		tablaServicios.refresh();
 		tablaParadas.refresh();
-		
+
 	}
-	
+
 	private List<Servicio> obtenerServiciosSeleccionados() {
 		List<Servicio> seleccionados = new ArrayList<>();
 		for (ServicioFX servicioFX : serviciosList) {

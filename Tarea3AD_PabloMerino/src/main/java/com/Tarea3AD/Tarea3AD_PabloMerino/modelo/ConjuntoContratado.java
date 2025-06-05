@@ -5,15 +5,11 @@ import java.util.List;
 
 public class ConjuntoContratado {
 	private Long id;
-    private double precioTotal;
-    private char modoPago;
-    private String extra = null;
+	private double precioTotal;
+	private char modoPago;
+	private String extra = null;
 
-    List<Long> servicios = new ArrayList<>();
-
-
-	
-	
+	List<Long> servicios = new ArrayList<>();
 
 	public ConjuntoContratado(Long id, double precioTotal, char modoPago, String extra, List<Long> servicios) {
 		super();
@@ -24,8 +20,6 @@ public class ConjuntoContratado {
 		this.servicios = servicios;
 	}
 
-
-
 	public ConjuntoContratado(Long id, double precioTotal, char modoPago, String extra) {
 		super();
 		this.id = id;
@@ -33,8 +27,6 @@ public class ConjuntoContratado {
 		this.modoPago = modoPago;
 		this.extra = extra;
 	}
-
-
 
 	public ConjuntoContratado() {
 		super();
@@ -72,19 +64,13 @@ public class ConjuntoContratado {
 		this.extra = extra;
 	}
 
-	
-
 	public List<Long> getServicios() {
 		return servicios;
 	}
 
-
-
 	public void setServicios(List<Long> servicios) {
 		this.servicios = servicios;
 	}
-
-
 
 	@Override
 	public String toString() {
@@ -92,5 +78,4 @@ public class ConjuntoContratado {
 				+ extra + ", servicios=" + servicios + "]";
 	}
 
-   
 }

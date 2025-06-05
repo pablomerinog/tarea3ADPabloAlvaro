@@ -3,11 +3,18 @@ package com.Tarea3AD.Tarea3AD_PabloMerino.config;
 import java.io.IOException;
 import java.util.Properties;
 
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Servicio;
+import com.Tarea3AD.Tarea3AD_PabloMerino.repository.Db4oRepository;
+import com.db4o.ObjectContainer;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 
+@Configuration
 public class ObjectDBConfig {
 
 	private static final EntityManagerFactory emf;
@@ -28,6 +35,8 @@ public class ObjectDBConfig {
 	}
 
 	public static void close() {
+
 		emf.close();
+
 	}
 }

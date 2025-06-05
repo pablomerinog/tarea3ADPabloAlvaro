@@ -25,6 +25,8 @@ public class db4oService {
 		this.conjuntoRepo = new Db4oRepository<>(db, ConjuntoContratado.class);
 		this.contadorRepo = new Db4oRepository<>(db, ContadorID.class);
 		this.contadorConjuntoRepo = new Db4oRepository<>(db, ContadorIdConjunto.class);
+		
+       
 
 	}
 
@@ -65,7 +67,6 @@ public class db4oService {
 	// Servicio
 	public void guardarServicio(Servicio servicio) {
 		servicioRepo.save(servicio);
-
 	}
 
 	public void eliminarServicio(Servicio servicio) {
@@ -125,5 +126,8 @@ public class db4oService {
 		});
 
 	}
+	
+	
+
 
 }

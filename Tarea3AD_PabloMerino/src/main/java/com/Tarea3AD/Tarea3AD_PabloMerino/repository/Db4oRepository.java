@@ -16,6 +16,7 @@ public class Db4oRepository<T> {
 		this.clazz = clazz;
 	}
 
+	
 	public void save(T obj) {
 		db.store(obj);
 		db.commit();
