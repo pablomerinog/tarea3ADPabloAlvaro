@@ -467,7 +467,7 @@ public class paradaController implements Initializable {
 			String localidad = tfLocalidad.getText();
 			String peso = tfPeso.getText();
 			double pesoBn = Double.parseDouble(peso);
-			String dimensiones = tfDimensiones.getText(); // 3x6x4 int[3,6,4]
+			String dimensiones = tfDimensiones.getText(); 
 			String[] partes = dimensiones.split("x");
 			boolean urgente = cbUrgente.isSelected();
 			int[] arrayDimensiones = new int[3];
