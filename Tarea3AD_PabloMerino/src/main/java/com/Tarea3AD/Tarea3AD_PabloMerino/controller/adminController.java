@@ -459,6 +459,7 @@ public class adminController implements Initializable {
 		parada.setIdUsuario(nuevoUsuario.getId());
 
 		Parada nuevaParada = paradaService.save(parada);
+		
 		ExistDBConfig.getInstance().crearColeccionParada(nuevaParada.getNombre());
 		
 		limpiarCampos();
@@ -546,51 +547,7 @@ public class adminController implements Initializable {
 		tablaParadas.refresh();
 	}
 
-	@FXML
-	private void asignarServicios2(ActionEvent event) {
-
-		List<Servicio> serviciosSeleccionados = obtenerServiciosSeleccionados();
-		List<Parada> paradasSeleccionadas = obtenerParadasSeleccionadas();
-
-		if (paradasSeleccionadas.isEmpty()) {
-			alertaError("Error", "Debes seleccionar una parada.");
-			return;
-		}
-
-		for (Parada parada : paradasSeleccionadas) {
-			Long idParada = parada.getId();
-
-			List<Servicio> serviciosActuales = db4oService.listarServiciosPorIdParada(idParada);
-
-			List<Servicio> serviciosDeseados = serviciosSeleccionados;
-
-			for (Servicio servicioExistente : serviciosActuales) {
-				if (!serviciosDeseados.contains(servicioExistente)) {
-					servicioExistente.getIdParadas().remove(idParada);
-					db4oService.guardarServicio(servicioExistente);
-				}
-			}
-
-			for (Servicio servicioDeseado : serviciosDeseados) {
-//				if (servicioDeseado.getIdParadas() == null) {
-//					servicioDeseado.setIdParadas(new ArrayList<>());
-//				}
-
-				if (!servicioDeseado.getIdParadas().contains(idParada)) {
-					servicioDeseado.getIdParadas().add(idParada);
-					db4oService.guardarServicio(servicioDeseado);
-				}
-			}
-		}
-
-		alertaInfo("Asignación actualizada", "Las asociaciones se han actualizado correctamente.");
-
-		serviciosList.forEach(servicioFX -> servicioFX.setSeleccionado(false));
-		paradasList.forEach(paradaFX -> paradaFX.setSeleccionado(false));
-		tablaServicios.refresh();
-		tablaParadas.refresh();
-
-	}
+	
 
 	private List<Servicio> obtenerServiciosSeleccionados() {
 		List<Servicio> seleccionados = new ArrayList<>();

@@ -42,7 +42,7 @@ public class Parada {
 	private Set<PereParada> pereParada = new HashSet<>();
 
 	private transient boolean seleccionado = false;
-	
+
 	public Parada(Long id, String nombre, char region, String responsable, Long idUsuario) {
 		super();
 		this.id = id;
@@ -97,8 +97,6 @@ public class Parada {
 		return id;
 	}
 
-	
-
 	public void setId(Long id) {
 		this.id = id;
 	}
@@ -140,7 +138,7 @@ public class Parada {
 		return "Parada [id=" + id + ", nombre=" + nombre + ", region=" + region + ", responsable=" + responsable
 				+ ", idUsuario=" + idUsuario + ", pereParada=" + pereParada + "]";
 	}
-	
+
 	public boolean isSeleccionado() {
 		return seleccionado;
 	}

@@ -24,19 +24,19 @@
 						<Font name="System Bold" size="20.0" />
 					</font>
 				</Label>
-				<Line endX="-100.0" endY="407.0" layoutX="401.0" layoutY="72.0" startX="-100.0" startY="-72.0" stroke="#a4dcf4" />
+				<Line endX="-99.99996948242188" endY="433.5999755859375" layoutX="401.0" layoutY="72.0" startX="-100.0" startY="-72.0" stroke="#a4dcf4" />
 				<Label alignment="CENTER" layoutX="15.0" layoutY="14.0" style="&#10;" text="Bienvenido admin de parada" textAlignment="CENTER" textFill="#5dbef4" wrapText="false">
 					<font>
 						<Font name="System Bold" size="20.0" />
 					</font>
 				</Label>
-				<Button fx:id="btnCerrarSesion" layoutX="89.0" layoutY="50.0" mnemonicParsing="false" onAction="#logout" style="-fx-background-color: red;" text="Cerrar Sesión" textFill="WHITE">
+				<Button fx:id="btnCerrarSesion" layoutX="87.0" layoutY="50.0" mnemonicParsing="false" onAction="#logout" style="-fx-background-color: red;" text="Cerrar Sesión" textFill="WHITE">
 					<font>
 						<Font name="System Bold" size="12.0" />
 					</font>
 				</Button>
 				<Line endX="-110.0" endY="407.0" layoutX="110.0" layoutY="-304.0" startX="190.5" startY="407.0" stroke="#a4dcf4" />
-				<TableView id="listaServicios" fx:id="tablaParadas" layoutX="306.0" layoutY="165.0" prefHeight="312.0" prefWidth="391.0">
+				<TableView id="listaServicios" fx:id="tablaParadas" layoutX="309.0" layoutY="109.0" prefHeight="164.0" prefWidth="391.0">
 					<columns>
 						<TableColumn fx:id="colId" prefWidth="50.0" text="Id" />
 						<TableColumn fx:id="colNombre" prefWidth="67.0" text="Nombre" />
@@ -46,20 +46,14 @@
 						<TableColumn fx:id="colContrasena" prefWidth="90.0" text="Contraseña" />
 					</columns>
 				</TableView>
-
-				<Button fx:id="btnExportar" layoutX="448.0" layoutY="79.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="65.0" style="-fx-background-color: green;" text="Exportar" textFill="WHITE">
-					<font>
-						<Font name="System Bold" size="12.0" />
-					</font>
-				</Button>
 				<Label layoutX="309.0" layoutY="50.0" prefHeight="25.0" prefWidth="316.0" text="Selecciona una parada de la lista y pulsa el boton &quot;Exportar&quot;." textFill="#5dbef4">
 					<font>
 						<Font size="11.0" />
 					</font>
 				</Label>
-				<DatePicker fx:id="fechaIni" layoutX="340.0" layoutY="127.0" prefHeight="25.0" prefWidth="123.0" promptText="Fecha inicial" />
-				<DatePicker fx:id="fechaFin" layoutX="491.0" layoutY="127.0" prefHeight="25.0" prefWidth="123.0" promptText="Fecha final" />
-				<Button fx:id="btnBuscar" layoutX="631.0" layoutY="127.0" mnemonicParsing="false" onAction="#exportarDatosParada" text="Buscar" />
+				<DatePicker fx:id="fechaIni" layoutX="339.0" layoutY="76.0" prefHeight="25.0" prefWidth="123.0" promptText="Fecha inicial" />
+				<DatePicker fx:id="fechaFin" layoutX="490.0" layoutY="76.0" prefHeight="25.0" prefWidth="123.0" promptText="Fecha final" />
+				<Button fx:id="btnBuscar" layoutX="630.0" layoutY="76.0" mnemonicParsing="false" onAction="#exportarDatosParada" text="Buscar" />
 				<Label alignment="CENTER" layoutX="58.0" layoutY="112.0" style="&#10;" text="Sellar peregrino" textAlignment="CENTER" textFill="#5dbef4" wrapText="false">
 					<font>
 						<Font name="System Bold" size="20.0" />
@@ -81,6 +75,26 @@
             <ListView fx:id="listaServicios" layoutX="37.0" layoutY="258.0" prefHeight="79.0" prefWidth="192.0" />
             <ComboBox fx:id="cmbxModoPago" layoutX="58.0" layoutY="345.0" prefWidth="150.0" promptText="Modo de pago: " />
             <TextField fx:id="extra" layoutX="45.0" layoutY="383.0" prefHeight="47.0" prefWidth="176.0" promptText="Extra: " />
+            <!-- <Button fx:id="btnVerPedidos" layoutX="162.0" layoutY="50.0" mnemonicParsing="false" onAction="#verEnviosParada" style="-fx-background-color: green;" text="Ver pedidos" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Button> -->
+            <Label alignment="CENTER" layoutX="308.0" layoutY="289.0" style="&#10;" text="Ver envíos" textAlignment="CENTER" textFill="#5dbef4" wrapText="false">
+               <font>
+                  <Font name="System Bold" size="20.0" />
+               </font>
+            </Label>
+            <Line endX="-110.0" endY="407.0" layoutX="408.0" layoutY="-125.0" startX="303.199951171875" startY="407.0" stroke="#a4dcf4" />
+            <TableView id="listaServicios" fx:id="tablaEnvios" layoutX="309.0" layoutY="320.0" prefHeight="174.0" prefWidth="391.0">
+               <columns>
+                  <TableColumn fx:id="colIdEnvio" prefWidth="30.39996337890625" text="Id" />
+                  <TableColumn fx:id="colPeso" prefWidth="52.79998779296875" text="Peso" />
+                  <TableColumn fx:id="colVolumen" prefWidth="76.79998779296875" text="Volumen" />
+                  <TableColumn fx:id="colUrgente" prefWidth="55.999969482421875" text="Urgente" />
+                  <TableColumn fx:id="colDireccion" prefWidth="88.79998779296875" text="Direccion" />
+               </columns>
+            </TableView>
 			</children>
 		</AnchorPane>
 	</children>

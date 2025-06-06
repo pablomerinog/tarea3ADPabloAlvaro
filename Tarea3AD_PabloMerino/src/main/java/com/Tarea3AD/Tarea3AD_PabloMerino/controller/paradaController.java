@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -62,12 +63,16 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.beans.property.SimpleStringProperty;
 
 @Controller
 public class paradaController implements Initializable {
 
 	@FXML
 	private Button btnCerrarSesion;
+
+	@FXML
+	private Button btnVerPedidos;
 
 	@FXML
 	private Button btnExportar;
@@ -111,6 +116,22 @@ public class paradaController implements Initializable {
 	private TableColumn<Carnet, String> colCarnetPere;
 	@FXML
 	private TableColumn<Usuario, String> colUsuarioPere;
+
+	@FXML
+	private TableView<EnvioACasa> tablaEnvios;
+
+	@FXML
+	private TableColumn<EnvioACasa, Long> colIdEnvio;
+
+	@FXML
+	private TableColumn<EnvioACasa, Double> colPeso;
+
+	@FXML
+	private TableColumn<EnvioACasa, String> colVolumen;
+	@FXML
+	private TableColumn<EnvioACasa, Boolean> colUrgente;
+	@FXML
+	private TableColumn<EnvioACasa, String> colDireccion;
 
 	@FXML
 	private DatePicker fechaIni;
@@ -214,6 +235,22 @@ public class paradaController implements Initializable {
 			}
 		});
 
+		colIdEnvio.setCellValueFactory(new PropertyValueFactory<>("id"));
+		colPeso.setCellValueFactory(new PropertyValueFactory<>("peso"));
+
+		colVolumen.setCellValueFactory(cellData -> {
+			int[] vol = cellData.getValue().getVolumen();
+			String volString = Arrays.toString(vol);
+			return new SimpleStringProperty(volString);
+		});
+
+		colUrgente.setCellValueFactory(new PropertyValueFactory<>("urgente"));
+		colDireccion.setCellValueFactory(cellData -> {
+			Direccion dir = cellData.getValue().getDireccion();
+			String direccionCompleta = dir.getDireccion() + ", " + dir.getLocalidad();
+			return new SimpleStringProperty(direccionCompleta);
+		});
+		verEnviosParada();
 	}
 
 	public void cargarParadas() {
@@ -410,20 +447,6 @@ public class paradaController implements Initializable {
 		}
 	}
 
-//	public void cargarServicios() {
-//		Usuario usuario = sesion.getUsuIniciado();
-//
-//		Parada parada = paradasService.findByIdUsuario(usuario.getId());
-//
-//		List<Servicio> serviciosParada = db4oService.listarServicios().stream()
-//				.filter(servicio -> servicio.getIdParadas().contains(parada.getId())).collect(Collectors.toList());
-//		List<String> nombresServicios = new ArrayList<>();
-//		for (Servicio s : serviciosParada) {
-//			nombresServicios.add(s.getNombreServicio());
-//		}
-//		cmbxServicios.setItems(FXCollections.observableArrayList(nombresServicios));
-//	}
-
 	public void cargarServicios() {
 		Usuario usuario = sesion.getUsuIniciado();
 		Parada parada = paradasService.findByIdUsuario(usuario.getId());
@@ -441,6 +464,9 @@ public class paradaController implements Initializable {
 	}
 
 	private void mostrarVentanaEnvioCasa() {
+		Usuario usuario = sesion.getUsuIniciado();
+		Parada parada = paradasService.findByIdUsuario(usuario.getId());
+
 		Stage stage = new Stage();
 		stage.setTitle("Datos de Envío a Casa");
 
@@ -467,7 +493,7 @@ public class paradaController implements Initializable {
 			String localidad = tfLocalidad.getText();
 			String peso = tfPeso.getText();
 			double pesoBn = Double.parseDouble(peso);
-			String dimensiones = tfDimensiones.getText(); 
+			String dimensiones = tfDimensiones.getText();
 			String[] partes = dimensiones.split("x");
 			boolean urgente = cbUrgente.isSelected();
 			int[] arrayDimensiones = new int[3];
@@ -479,7 +505,7 @@ public class paradaController implements Initializable {
 			envio.setDireccion(dire);
 			envio.setUrgente(urgente);
 			envio.setPeso(pesoBn);
-
+			envio.setIdParada(parada.getId());
 			if (partes.length == 3) {
 				try {
 					for (int i = 0; i < 3; i++) {
@@ -500,19 +526,19 @@ public class paradaController implements Initializable {
 				alert.showAndWait();
 				return;
 			}
-			
+
 			EntityManager em = ObjectDBConfig.getEntityManager();
 			try {
-			    em.getTransaction().begin();
-			    envioService.saveEnvio(envio);
-			    em.getTransaction().commit();
+				em.getTransaction().begin();
+				envioService.saveEnvio(envio);
+				em.getTransaction().commit();
+				
 			} catch (Exception ex) {
-			    em.getTransaction().rollback();
+				em.getTransaction().rollback();
 			} finally {
-			    em.close();  
+				em.close();
 			}
-			
-
+						
 			System.out.println("Dirección: " + direccion);
 			System.out.println("Localidad: " + localidad);
 			System.out.println("Peso: " + peso);
@@ -521,7 +547,6 @@ public class paradaController implements Initializable {
 
 			stage.close();
 			
-			envioService.cerrarConexion();
 		});
 
 		VBox layout = new VBox(10);
@@ -533,8 +558,29 @@ public class paradaController implements Initializable {
 		stage.setScene(scene);
 		stage.initModality(Modality.APPLICATION_MODAL);
 		stage.showAndWait();
-		
-		
+		 
+	}
+
+//	@FXML
+	private void verEnviosParada() {
+		Usuario usuario = sesion.getUsuIniciado();
+		Parada parada = paradasService.findByIdUsuario(usuario.getId());
+
+		List<EnvioACasa> envios = envioService.findByIdParada(parada.getId());
+		for (EnvioACasa envio : envios) {
+			System.out.println("ID: " + envio.getId());
+			System.out.println("Peso: " + envio.getPeso());
+			System.out.println("Volumen: " + Arrays.toString(envio.getVolumen()));
+			System.out.println("Urgente: " + envio.isUrgente());
+
+			Direccion d = envio.getDireccion();
+			System.out.println("Dirección: " + d.getDireccion() + ", " + d.getLocalidad() + ". ");
+			System.out.println("-----");
+		}
+
+		ObservableList<EnvioACasa> envio = FXCollections.observableArrayList(envios);
+		tablaEnvios.setItems(envio);
+
 	}
 
 }

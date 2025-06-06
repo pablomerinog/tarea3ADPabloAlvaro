@@ -9,6 +9,5 @@ import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.EnvioACasa;
 
 @Repository
 public interface EnvioACasaRepository extends JpaRepository<EnvioACasa, Long> {
-    
-    List<EnvioACasa> findByIdParada(long idParada);
+	List<EnvioACasa> findByIdParada(long idParada);
 }

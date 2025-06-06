@@ -19,32 +19,31 @@ public class EnvioACasaService {
 	@Autowired
 	private EnvioACasaRepository repository;
 
-
 	public List<EnvioACasa> getAllEnvios() {
-		return repository.findAll();
+		EntityManager em = ObjectDBConfig.getEntityManager();
+		List<EnvioACasa> lista = em.createQuery("SELECT e FROM EnvioACasa e", EnvioACasa.class).getResultList();
+		em.close();
+		return lista;
 	}
 
 	public Optional<EnvioACasa> getEnvioById(Long id) {
 		return repository.findById(id);
 	}
 
-//	public EnvioACasa saveEnvio(EnvioACasa envio) {
-//		return repository.save(envio);
-//	}
-//	
 	public EnvioACasa saveEnvio(EnvioACasa envio) {
-	    EntityManager em = ObjectDBConfig.getEntityManager();
-	    try {
-	        em.getTransaction().begin();
-	        em.persist(envio);
-	        em.getTransaction().commit();
-	    } catch (Exception e) {
-	        if (em.getTransaction().isActive()) em.getTransaction().rollback();
-	        e.printStackTrace();
-	    } finally {
-	        em.close();
-	    }
-	    return envio;
+		EntityManager em = ObjectDBConfig.getEntityManager();
+		try {
+			em.getTransaction().begin();
+			em.persist(envio);
+			em.getTransaction().commit();
+		} catch (Exception e) {
+			if (em.getTransaction().isActive())
+				em.getTransaction().rollback();
+			e.printStackTrace();
+		} finally {
+			em.close();
+		}
+		return envio;
 	}
 
 	public void deleteEnvio(Long id) {
@@ -52,12 +51,15 @@ public class EnvioACasaService {
 	}
 
 	public List<EnvioACasa> findByIdParada(long idParada) {
-		return repository.findByIdParada(idParada);
-	}
-	
-	public void cerrarConexion() {
-	    ObjectDBConfig.close();
+		EntityManager em = ObjectDBConfig.getEntityManager();
+		List<EnvioACasa> lista = em.createQuery("SELECT e FROM EnvioACasa e WHERE e.idParada = :id", EnvioACasa.class)
+				.setParameter("id", idParada).getResultList();
+		em.close();
+		return lista;
 	}
 
+	public void cerrarConexion() {
+		ObjectDBConfig.close();
+	}
 
 }
