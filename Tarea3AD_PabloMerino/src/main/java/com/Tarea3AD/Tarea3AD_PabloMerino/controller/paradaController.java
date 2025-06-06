@@ -492,8 +492,23 @@ public class paradaController implements Initializable {
 			String direccion = tfDireccion.getText();
 			String localidad = tfLocalidad.getText();
 			String peso = tfPeso.getText();
+			
+			
+			if (!peso.matches("\\d+(\\.\\d+)?")) {
+				Alert alert = new Alert(Alert.AlertType.ERROR, "El peso debe ser un número válido.");
+				alert.showAndWait();
+				return;
+			}
+			
 			double pesoBn = Double.parseDouble(peso);
 			String dimensiones = tfDimensiones.getText();
+			
+			if (!dimensiones.matches("\\d+\\s*x\\s*\\d+\\s*x\\s*\\d+")) {
+				Alert alert = new Alert(Alert.AlertType.ERROR, "Las dimensiones deben tener el formato 'largo x ancho x alto' con números.");
+				alert.showAndWait();
+				return;
+			}
+			
 			String[] partes = dimensiones.split("x");
 			boolean urgente = cbUrgente.isSelected();
 			int[] arrayDimensiones = new int[3];
@@ -502,6 +517,8 @@ public class paradaController implements Initializable {
 
 			EnvioACasa envio = new EnvioACasa();
 
+			
+			
 			envio.setDireccion(dire);
 			envio.setUrgente(urgente);
 			envio.setPeso(pesoBn);
@@ -512,6 +529,8 @@ public class paradaController implements Initializable {
 						arrayDimensiones[i] = Integer.parseInt(partes[i].trim());
 					}
 
+				
+					
 					envio.setVolumen(arrayDimensiones);
 
 				} catch (NumberFormatException ex) {

@@ -200,11 +200,11 @@ public class adminController implements Initializable {
 		colCheck.setEditable(true);
 		mostrarDb4o();
 
-		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-			if (db != null) {
-				db.close();
-			}
-		}));
+//		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+//			if (db != null) {
+//				db.close();
+//			}
+//		}));
 
 	}
 
