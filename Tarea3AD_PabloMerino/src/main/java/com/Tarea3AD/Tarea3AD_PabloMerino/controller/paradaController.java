@@ -495,8 +495,7 @@ public class paradaController implements Initializable {
 			
 			
 			if (!peso.matches("\\d+(\\.\\d+)?")) {
-				Alert alert = new Alert(Alert.AlertType.ERROR, "El peso debe ser un número válido.");
-				alert.showAndWait();
+				alertaError("Error", "El peso debe ser un número válido");
 				return;
 			}
 			
@@ -504,8 +503,8 @@ public class paradaController implements Initializable {
 			String dimensiones = tfDimensiones.getText();
 			
 			if (!dimensiones.matches("\\d+\\s*x\\s*\\d+\\s*x\\s*\\d+")) {
-				Alert alert = new Alert(Alert.AlertType.ERROR, "Las dimensiones deben tener el formato 'largo x ancho x alto' con números.");
-				alert.showAndWait();
+				alertaError("Error", "Las dimensiones deben tener el formato 'largo x ancho x alto' con números.");
+				
 				return;
 			}
 			
