@@ -493,6 +493,10 @@ public class paradaController implements Initializable {
 			String localidad = tfLocalidad.getText();
 			String peso = tfPeso.getText();
 			
+			if (direccion.isEmpty() || localidad.isEmpty()|| direccion.isEmpty() || peso.isEmpty()) {
+			    alertaError("ERROR", "Tienes que rellenar todos los campos");
+			    return; 
+			}
 			
 			if (!peso.matches("\\d+(\\.\\d+)?")) {
 				alertaError("Error", "El peso debe ser un número válido");
