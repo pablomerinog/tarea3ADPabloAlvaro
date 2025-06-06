@@ -20,9 +20,8 @@ public class EnvioACasa extends Servicio {
 	@Embedded
 	private Direccion direccion;
 
-	public EnvioACasa(Long idServicio, String nombreServicio, double precio, Long id, double peso, int[] volumen,
+	public EnvioACasa( double precio, Long id, double peso, int[] volumen,
 			boolean urgente, long idParada, Direccion direccion) {
-		super(idServicio, nombreServicio, precio);
 		this.id = id;
 		this.peso = peso;
 		this.volumen = volumen;
