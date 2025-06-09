@@ -1,12 +1,14 @@
 package com.Tarea3AD.Tarea3AD_PabloMerino.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -21,11 +23,13 @@ import org.w3c.dom.NodeList;
 
 import com.Tarea3AD.Tarea3AD_PabloMerino.config.StageManager;
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Carnet;
+import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Estancia;
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Parada;
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.PereParada;
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Peregrino;
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Usuario;
 import com.Tarea3AD.Tarea3AD_PabloMerino.services.CarnetService;
+import com.Tarea3AD.Tarea3AD_PabloMerino.services.ExistDBService;
 import com.Tarea3AD.Tarea3AD_PabloMerino.services.ParadaService;
 import com.Tarea3AD.Tarea3AD_PabloMerino.services.PereParadaService;
 import com.Tarea3AD.Tarea3AD_PabloMerino.services.PeregrinoService;
@@ -83,6 +87,12 @@ public class registroController implements Initializable {
 	private PeregrinoService peregrinoService;
 	@Autowired
 	private PereParadaService pereParadaService;
+	@Autowired
+	private peregrinoController peregrinoController;
+	
+	@Autowired
+	private ExistDBService existDBService;
+	
 	@Lazy
 	@Autowired
 	private StageManager stageManager;
@@ -168,15 +178,23 @@ public class registroController implements Initializable {
 		peregrino.setCarnet(carnet);
 		peregrino.setUsuario(usuario);
 		Peregrino nuevoPeregrino = peregrinoService.save(peregrino);
-
+		
 		peregrinoService.save(peregrino);
+		
 		PereParada pereparada = new PereParada();
 		pereparada.setPeregrino(nuevoPeregrino);
 		pereparada.setParada(paradaInicial);
 		pereparada.setFecha(LocalDate.now());
 
 		pereParadaService.save(pereparada);
-
+		
+		
+		peregrinoController.exportarCarnet2(peregrino);
+		
+		File ficheroCarnet = new File("carnets/" + peregrino.getNombrePeregrino() + ".xml");
+		
+		existDBService.guardarCarnetExistDB(paradaInicialNombre, ficheroCarnet);
+		
 		limpiarCampos();
 		alertaInfo("Registro correcto", "El peregrino se ha registrado con éxito.");
 

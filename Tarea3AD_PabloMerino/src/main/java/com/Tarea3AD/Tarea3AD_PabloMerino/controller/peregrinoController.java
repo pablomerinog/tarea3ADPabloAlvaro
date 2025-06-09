@@ -6,6 +6,7 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -113,25 +114,8 @@ public class peregrinoController implements Initializable {
 		stageManager.switchScene(FxmlView.LOGIN);
 	}
 
-	@FXML
-	private boolean exportarCarnet(ActionEvent event) throws IOException {
-		Usuario usuario = sesion.getUsuIniciado();
-//		String nombrePeregrino= usuario.getnombreUsuario();
-//		Long idPeregrino = usuario.getId();
-//		System.out.println(idPeregrino);
-//		System.out.println(nombrePeregrino);
-		Optional<Peregrino> peregrinoOpt = pereService.findByUsuario(usuario);
-//		Optional<Peregrino> peregrinoOpt = pereService.findBynombrePeregrino(nombrePeregrino);
-//		System.out.println("Peregrino"+peregrinoOpt.get());
-
-		if (!peregrinoOpt.isPresent()) {
-			alertaError("ERROR", "No se ha encontrado el peregrino.");
-			return false;
-		}
-		Peregrino peregrino = peregrinoOpt.get();
-		boolean correcto = false;
+	public void exportarCarnet2(Peregrino peregrino) {
 		try {
-
 			DocumentBuilderFactory fabricaConstructorDocumento = DocumentBuilderFactory.newInstance();
 			DocumentBuilder constructorDocumento = fabricaConstructorDocumento.newDocumentBuilder();
 			DOMImplementation implementacion = constructorDocumento.getDOMImplementation();
@@ -207,7 +191,7 @@ public class peregrinoController implements Initializable {
 				ordenParada++;
 			}
 			carnet.appendChild(paradas);
-
+			System.out.println("IDDDDD"+peregrino.getId());
 			Set<Estancia> estanciasLio = estanciaService.findByPeregrinoId(peregrino.getId());
 			Set<Estancia> estanciasPeregrino = new TreeSet<>(Comparator.comparing(Estancia::getId));
 			estanciasPeregrino.addAll(estanciasLio);
@@ -251,12 +235,30 @@ public class peregrinoController implements Initializable {
 
 			System.out.println("Se ha exportado el carnet en XML.");
 
-			correcto = true;
 		} catch (Exception ex) {
 			System.out.println("Error al generar el archivo XML: " + ex.getMessage());
 			ex.printStackTrace();
 		}
-		return correcto;
+
+	}
+
+	@FXML
+	private void exportarCarnet(ActionEvent event) throws IOException {
+		Usuario usuario = sesion.getUsuIniciado();
+//		String nombrePeregrino= usuario.getnombreUsuario();
+//		Long idPeregrino = usuario.getId();
+//		System.out.println(idPeregrino);
+//		System.out.println(nombrePeregrino);
+		Optional<Peregrino> peregrinoOpt = pereService.findByUsuario(usuario);
+//		Optional<Peregrino> peregrinoOpt = pereService.findBynombrePeregrino(nombrePeregrino);
+//		System.out.println("Peregrino"+peregrinoOpt.get());
+
+		if (!peregrinoOpt.isPresent()) {
+			alertaError("ERROR", "No se ha encontrado el peregrino.");
+			return;
+		}
+		Peregrino peregrino = peregrinoOpt.get();
+		exportarCarnet2(peregrino);
 	}
 
 	private void rellenarDatos() {

@@ -460,7 +460,9 @@ public class adminController implements Initializable {
 
 		Parada nuevaParada = paradaService.save(parada);
 		
-		ExistDBConfig.getInstance().crearColeccionParada(nuevaParada.getNombre());
+		String nombreFinalParada = nuevaParada.getNombre()+","+nuevaParada.getRegion(); 
+		
+		ExistDBConfig.getInstance().crearColeccionParada(nombreFinalParada);
 		
 		limpiarCampos();
 		alertaInfo("Registro correcto", "La parada se ha registrado con éxito.");

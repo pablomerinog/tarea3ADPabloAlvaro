@@ -16,8 +16,8 @@ import jakarta.persistence.EntityManager;
 @Service
 public class EnvioACasaService {
 
-	@Autowired
-	private EnvioACasaRepository repository;
+//	@Autowired
+//	private EnvioACasaRepository repository;
 
 	public List<EnvioACasa> getAllEnvios() {
 		EntityManager em = ObjectDBConfig.getEntityManager();
@@ -26,9 +26,9 @@ public class EnvioACasaService {
 		return lista;
 	}
 
-	public Optional<EnvioACasa> getEnvioById(Long id) {
-		return repository.findById(id);
-	}
+//	public Optional<EnvioACasa> getEnvioById(Long id) {
+//		return repository.findById(id);
+//	}
 
 	public EnvioACasa saveEnvio(EnvioACasa envio) {
 		EntityManager em = ObjectDBConfig.getEntityManager();
@@ -46,9 +46,9 @@ public class EnvioACasaService {
 		return envio;
 	}
 
-	public void deleteEnvio(Long id) {
-		repository.deleteById(id);
-	}
+//	public void deleteEnvio(Long id) {
+//		repository.deleteById(id);
+//	}
 
 	public List<EnvioACasa> findByIdParada(long idParada) {
 		EntityManager em = ObjectDBConfig.getEntityManager();

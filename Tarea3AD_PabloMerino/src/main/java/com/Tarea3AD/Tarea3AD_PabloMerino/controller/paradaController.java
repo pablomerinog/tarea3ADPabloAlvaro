@@ -1,5 +1,6 @@
 package com.Tarea3AD.Tarea3AD_PabloMerino.controller;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -12,9 +13,16 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import com.Tarea3AD.Tarea3AD_PabloMerino.config.ObjectDBConfig;
 import com.Tarea3AD.Tarea3AD_PabloMerino.config.StageManager;
@@ -32,6 +40,7 @@ import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Usuario;
 import com.Tarea3AD.Tarea3AD_PabloMerino.services.CarnetService;
 import com.Tarea3AD.Tarea3AD_PabloMerino.services.EnvioACasaService;
 import com.Tarea3AD.Tarea3AD_PabloMerino.services.EstanciaService;
+import com.Tarea3AD.Tarea3AD_PabloMerino.services.ExistDBService;
 import com.Tarea3AD.Tarea3AD_PabloMerino.services.ParadaService;
 import com.Tarea3AD.Tarea3AD_PabloMerino.services.PereParadaService;
 import com.Tarea3AD.Tarea3AD_PabloMerino.services.PeregrinoService;
@@ -40,6 +49,7 @@ import com.Tarea3AD.Tarea3AD_PabloMerino.services.db4oService;
 import com.Tarea3AD.Tarea3AD_PabloMerino.vistas.FxmlView;
 
 import jakarta.persistence.EntityManager;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -63,10 +73,12 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.beans.property.SimpleStringProperty;
 
 @Controller
 public class paradaController implements Initializable {
+
+	@FXML
+	private Button btnListarCarnets;
 
 	@FXML
 	private Button btnCerrarSesion;
@@ -172,6 +184,9 @@ public class paradaController implements Initializable {
 	private PereParadaService pereParadaService;
 	@Autowired
 	private EstanciaService estanciaService;
+	@Autowired
+	private ExistDBService existDBService;
+
 	@Lazy
 	@Autowired
 	private StageManager stageManager;
@@ -286,6 +301,43 @@ public class paradaController implements Initializable {
 	@FXML
 	private void logout(ActionEvent event) throws IOException {
 		stageManager.switchScene(FxmlView.LOGIN);
+	}
+
+	@FXML
+	private void listarCarnetsParada(ActionEvent event) throws IOException {
+		Usuario usuario = sesion.getUsuIniciado();
+		Parada parada = paradasService.findByIdUsuario(usuario.getId());
+
+		if (parada == null) {
+			alertaError("Error", "No se encontró la parada asociada al usuario.");
+			return;
+		}
+
+		String nombreParada = parada.getNombre() + "," + parada.getRegion();
+
+		List<String> carnets = existDBService.listarCarnetsPorParada(nombreParada);
+
+		if (carnets == null || carnets.isEmpty()) {
+			alertaInfo("Información", "No hay carnets expedidos en esta parada.");
+			return;
+		}
+
+		System.out.println(carnets);
+
+		ListView<String> listaCarnetsView = new ListView<>();
+		listaCarnetsView.setItems(FXCollections.observableArrayList(carnets));
+
+		VBox vbox = new VBox(listaCarnetsView);
+		vbox.setPadding(new Insets(10));
+		vbox.setSpacing(5);
+
+		Scene scene = new Scene(vbox, 400, 300);
+		Stage ventanaCarnets = new Stage();
+		ventanaCarnets.setTitle("Carnets expedidos en " + parada.getNombre());
+		ventanaCarnets.setScene(scene);
+		ventanaCarnets.initModality(Modality.APPLICATION_MODAL);
+		ventanaCarnets.showAndWait();
+
 	}
 
 	@FXML
@@ -492,26 +544,26 @@ public class paradaController implements Initializable {
 			String direccion = tfDireccion.getText();
 			String localidad = tfLocalidad.getText();
 			String peso = tfPeso.getText();
-			
-			if (direccion.isEmpty() || localidad.isEmpty()|| direccion.isEmpty() || peso.isEmpty()) {
-			    alertaError("ERROR", "Tienes que rellenar todos los campos");
-			    return; 
+
+			if (direccion.isEmpty() || localidad.isEmpty() || direccion.isEmpty() || peso.isEmpty()) {
+				alertaError("ERROR", "Tienes que rellenar todos los campos");
+				return;
 			}
-			
+
 			if (!peso.matches("\\d+(\\.\\d+)?")) {
 				alertaError("Error", "El peso debe ser un número válido");
 				return;
 			}
-			
+
 			double pesoBn = Double.parseDouble(peso);
 			String dimensiones = tfDimensiones.getText();
-			
+
 			if (!dimensiones.matches("\\d+\\s*x\\s*\\d+\\s*x\\s*\\d+")) {
 				alertaError("Error", "Las dimensiones deben tener el formato 'largo x ancho x alto' con números.");
-				
+
 				return;
 			}
-			
+
 			String[] partes = dimensiones.split("x");
 			boolean urgente = cbUrgente.isSelected();
 			int[] arrayDimensiones = new int[3];
@@ -520,8 +572,6 @@ public class paradaController implements Initializable {
 
 			EnvioACasa envio = new EnvioACasa();
 
-			
-			
 			envio.setDireccion(dire);
 			envio.setUrgente(urgente);
 			envio.setPeso(pesoBn);
@@ -532,8 +582,6 @@ public class paradaController implements Initializable {
 						arrayDimensiones[i] = Integer.parseInt(partes[i].trim());
 					}
 
-				
-					
 					envio.setVolumen(arrayDimensiones);
 
 				} catch (NumberFormatException ex) {
@@ -554,13 +602,13 @@ public class paradaController implements Initializable {
 				em.getTransaction().begin();
 				envioService.saveEnvio(envio);
 				em.getTransaction().commit();
-				
+
 			} catch (Exception ex) {
 				em.getTransaction().rollback();
 			} finally {
 				em.close();
 			}
-						
+
 			System.out.println("Dirección: " + direccion);
 			System.out.println("Localidad: " + localidad);
 			System.out.println("Peso: " + peso);
@@ -568,7 +616,7 @@ public class paradaController implements Initializable {
 			System.out.println("Urgente: " + urgente);
 
 			stage.close();
-			
+
 		});
 
 		VBox layout = new VBox(10);
@@ -580,7 +628,7 @@ public class paradaController implements Initializable {
 		stage.setScene(scene);
 		stage.initModality(Modality.APPLICATION_MODAL);
 		stage.showAndWait();
-		 
+
 	}
 
 //	@FXML

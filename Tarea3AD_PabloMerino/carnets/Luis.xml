@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xml" href="test.xsl"?>
+<carnet>
+	<id>3</id>
+	<fechaexp>06/06/2025</fechaexp>
+	<expedidoen>Oviedo</expedidoen>
+	<peregrino>
+		<nombre>Luis</nombre>
+		<nacionalidad>Croacia</nacionalidad>
+	</peregrino>
+	<hoy>06/06/2025</hoy>
+	<distanciatotal>10,0</distanciatotal>
+	<paradas>
+		<parada>
+			<orden>1</orden>
+			<nombre>Oviedo</nombre>
+			<region>O</region>
+		</parada>
+		<parada>
+			<orden>2</orden>
+			<nombre>Madrid</nombre>
+			<region>M</region>
+		</parada>
+	</paradas>
+	<estancias>
+		<estancia>
+			<id>13</id>
+			<fecha>06/06/2025</fecha>
+			<parada>Madrid</parada>
+			<vip>false</vip>
+		</estancia>
+	</estancias>
+</carnet>

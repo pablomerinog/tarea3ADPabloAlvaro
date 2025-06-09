@@ -4,14 +4,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.springframework.stereotype.Component;
 import org.xmldb.api.DatabaseManager;
 import org.xmldb.api.base.Collection;
 import org.xmldb.api.base.Database;
 import org.xmldb.api.base.XMLDBException;
 import org.xmldb.api.modules.CollectionManagementService;
-
-
-
+@Component
 public class ExistDBConfig {
 	private static final String URI;
 	private static final String DRIVER = "org.exist.xmldb.DatabaseImpl";
@@ -46,7 +45,7 @@ public class ExistDBConfig {
 
 			collection = DatabaseManager.getCollection(URI + "/practicaAD", USER, PASSWORD);
 			if (collection == null) {
-				throw new XMLDBException(0, "No se pudo acceder a la colección principal /tarea5_ad");
+				throw new XMLDBException(0, "No se pudo acceder a la colección principal /practicaAD");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -60,9 +59,9 @@ public class ExistDBConfig {
 		return instance;
 	}
 
-	public void createCollection(String collectionPath) {
+	public void createCollection(String ruta) {
 		try {
-			String fullPath = URI + collectionPath;
+			String fullPath = URI + ruta;
 			Collection parent = DatabaseManager.getCollection(URI, USER, PASSWORD);
 
 			if (parent != null) {
@@ -72,11 +71,11 @@ public class ExistDBConfig {
 
 				if (coll == null) {
 
-					String relativePath = collectionPath.startsWith("/") ? collectionPath.substring(1) : collectionPath;
+					String relativePath = ruta.startsWith("/") ? ruta.substring(1) : ruta;
 					mgtService.createCollection(relativePath);
-					System.out.println("Colección creada: " + collectionPath);
+					System.out.println("Colección creada: " + ruta);
 				} else {
-					System.out.println("La colección ya existe: " + collectionPath);
+					System.out.println("La colección ya existe: " + ruta);
 				}
 			} else {
 				System.out.println("No se pudo acceder a la colección raíz 'db'.");
@@ -87,8 +86,8 @@ public class ExistDBConfig {
 	}
 
 	public void crearColeccionParada(String nombreParada) {
-		String formattedStopName = nombreParada.replaceAll(" ", "_");
-		createCollection("/practicaAD/" + formattedStopName);
+		String formatea= nombreParada.replaceAll(" ", "_");
+		createCollection("/practicaAD/" + formatea);
 	}
 
 	public String getURI() {

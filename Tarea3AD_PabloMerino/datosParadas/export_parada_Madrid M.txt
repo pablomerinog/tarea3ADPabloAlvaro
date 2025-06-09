@@ -1,0 +1,13 @@
+Datos de la Parada
+ID: 3
+Nombre: Madrid
+Región: M
+
+Rango de fechas: 2025-06-04 a 2025-06-15
+
+Estancias:
+ID Estancia, Nombre Peregrino, Fecha, VIP
+4, Alvaro Diaz, 2025-06-05, No
+5, Alvaro Diaz, 2025-06-05, No
+11, Alvaro Diaz, 2025-06-06, No
+12, Pablo Merino, 2025-06-06, No
