@@ -20,6 +20,7 @@ import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.ParadaFX;
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Servicio;
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.ServicioFX;
 import com.Tarea3AD.Tarea3AD_PabloMerino.modelo.Usuario;
+import com.Tarea3AD.Tarea3AD_PabloMerino.services.MongoDBService;
 import com.Tarea3AD.Tarea3AD_PabloMerino.services.ParadaService;
 import com.Tarea3AD.Tarea3AD_PabloMerino.services.UserService;
 import com.Tarea3AD.Tarea3AD_PabloMerino.services.db4oService;
@@ -57,6 +58,9 @@ public class adminController implements Initializable {
 
 	@FXML
 	private Button btnCerrarSesion;
+	
+	@FXML
+	private Button btnBackup;
 
 	@FXML
 	private Button btnCancelar;
@@ -134,6 +138,9 @@ public class adminController implements Initializable {
 	private ParadaService paradaService;
 
 	@Autowired
+	private MongoDBService mongoDBService;
+	
+	@Autowired
 	private db4oService db4oService;
 
 	@Lazy
@@ -200,11 +207,6 @@ public class adminController implements Initializable {
 		colCheck.setEditable(true);
 		mostrarDb4o();
 
-//		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-//			if (db != null) {
-//				db.close();
-//			}
-//		}));
 
 	}
 
@@ -606,6 +608,14 @@ public class adminController implements Initializable {
 			System.out.println("----------------------------------");
 
 		}
-		
+	}
+	
+	@FXML
+	public void backup() {
+		if(mongoDBService.backupAllCarnets())
+			alertaInfo("Backup", "Backup correcto de los carnets.");
+			
+		else
+			alertaError("Backup", "Error al hacer el backup.");
 	}
 }

@@ -34,7 +34,7 @@
 						<Font name="System Bold" size="20.0" />
 					</font>
 				</Label>
-				<Button fx:id="btnCerrarSesion" layoutX="89.0" layoutY="50.0" mnemonicParsing="false" onAction="#logout" style="-fx-background-color: red;" text="Cerrar Sesión" textFill="WHITE">
+				<Button fx:id="btnCerrarSesion" layoutX="43.0" layoutY="50.0" mnemonicParsing="false" onAction="#logout" style="-fx-background-color: red;" text="Cerrar Sesión" textFill="WHITE">
 					<font>
 						<Font name="System Bold" size="12.0" />
 					</font>
@@ -105,6 +105,11 @@
                   <TableColumn fx:id="colRegion" prefWidth="38.66668701171875" text="Región" />
               </columns>
             </TableView>
+            <Button fx:id="btnBackup" layoutX="164.0" layoutY="50.0" mnemonicParsing="false" onAction="#backup" style="-fx-background-color: green;" text="Backup carnets" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Button>
 
 			</children>
 		</AnchorPane>
