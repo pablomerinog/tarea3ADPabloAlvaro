@@ -15,7 +15,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "pereparada")
-public class PereParada {
+public class PereParada  implements Comparable<PereParada>{
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "idPereParada", updatable = false, nullable = false)
@@ -103,6 +103,11 @@ public class PereParada {
 	@Override
 	public String toString() {
 		return "PereParada [id=" + id + ", peregrino=" + peregrino + ", parada=" + parada + ", fecha=" + fecha + "]";
+	}
+	@Override
+	public int compareTo(PereParada o) {
+		// TODO Auto-generated method stub
+		return (this.id).compareTo(o.id);
 	}
 
 }

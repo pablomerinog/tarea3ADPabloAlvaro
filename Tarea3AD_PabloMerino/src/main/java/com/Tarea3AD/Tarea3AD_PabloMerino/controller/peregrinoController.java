@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -166,12 +168,14 @@ public class peregrinoController implements Initializable {
 			Element paradas = documento.createElement("paradas");
 			int ordenParada = 1;
 
-			Set<PereParada> cjtoparadas = peregrino.getPereParadas();
-//			Set<PereParada> paraPeregrino = new TreeSet<>(Comparator.comparing(PereParada::getId));
-//			paraPeregrino.addAll(cjtoparadas);
+			Set<PereParada> cjtoparadas = new TreeSet<PereParada>();
+			cjtoparadas.addAll(peregrino.getPereParadas());
+			List<PereParada> paraPeregrino = new ArrayList<PereParada>();
+			paraPeregrino.addAll(cjtoparadas);
+			Collections.sort(paraPeregrino);
 //			System.out.println(paraPeregrino);
 
-			for (PereParada pp : cjtoparadas) {
+			for (PereParada pp : paraPeregrino) {
 				Parada parada = pp.getParada();
 				Element paradaElement = documento.createElement("parada");
 
@@ -192,6 +196,8 @@ public class peregrinoController implements Initializable {
 			}
 			carnet.appendChild(paradas);
 			System.out.println("IDDDDD"+peregrino.getId());
+			
+			
 			Set<Estancia> estanciasLio = estanciaService.findByPeregrinoId(peregrino.getId());
 			Set<Estancia> estanciasPeregrino = new TreeSet<>(Comparator.comparing(Estancia::getId));
 			estanciasPeregrino.addAll(estanciasLio);

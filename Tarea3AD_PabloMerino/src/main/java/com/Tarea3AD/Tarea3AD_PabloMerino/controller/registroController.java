@@ -177,17 +177,21 @@ public class registroController implements Initializable {
 		peregrino.setNacionalidad(nacionalidad);
 		peregrino.setCarnet(carnet);
 		peregrino.setUsuario(usuario);
-		Peregrino nuevoPeregrino = peregrinoService.save(peregrino);
+		
 		
 		peregrinoService.save(peregrino);
 		
 		PereParada pereparada = new PereParada();
-		pereparada.setPeregrino(nuevoPeregrino);
+		pereparada.setPeregrino(peregrino);
 		pereparada.setParada(paradaInicial);
 		pereparada.setFecha(LocalDate.now());
 
 		pereParadaService.save(pereparada);
+		Set<PereParada> pp = new HashSet<PereParada>();
+		pp.add(pereparada);
 		
+		peregrino.setPereParadas(pp);
+		Peregrino nuevoPeregrino = peregrinoService.save(peregrino);
 		
 		peregrinoController.exportarCarnet2(peregrino);
 		
